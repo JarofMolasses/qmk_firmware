@@ -15,6 +15,17 @@
  */
 #include "ssopadpm1.2.h"
 
+#include "lcd.h"
+#include "i2cmaster.h" //fleury i2c
+ //#include "i2c_master.h"  //qmk i2c
+
+#include <avr/io.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
 // Optional override functions below.
 // You can leave any or all of these undefined.
 // These are only required if you want to perform custom actions.
@@ -45,7 +56,8 @@ void matrix_init_kb(void) {
   setPinOutput(D5);
   writePinHigh(B0);
   writePinHigh(D5);
-  
+
+  matrix_init_user();
 }
 
 
