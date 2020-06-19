@@ -7,10 +7,10 @@ git submodule update --recursive --remote
 git push origin master
 ```
 ## Add LCD library:
-```
-cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876), posted by David Prentice
-and add to qmk library: qmk_firmware/lib/lcd_dprentice
-```
+
+cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice
+and add to qmk library: [qmk_firmware/lib/lcd_dprentice](https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice)
+
 ## Rules.mk
 ```
 add path and build targets:
