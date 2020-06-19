@@ -7,7 +7,7 @@ git push origin master
 ```
 ## Add LCD library:
 ```
-cop source files and add to qmk_firmware/lib/lcd_dprentice
+cop source files (https://www.avrfreaks.net/comment/2640876#comment-2640876) and add to qmk_firmware/lib/lcd_dprentice
 ```
 ## Rules.mk
 ```
