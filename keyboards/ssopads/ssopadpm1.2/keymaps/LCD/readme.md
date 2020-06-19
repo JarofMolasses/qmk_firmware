@@ -13,7 +13,7 @@ cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-26
 and add to qmk_firmware/lib
 
 ## Rules.mk
-see:https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk
+see: https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk
 
 add path and build targets:
 ```
