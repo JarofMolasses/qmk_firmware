@@ -13,10 +13,8 @@ cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-26
 and add to qmk library: [https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice]
 
 ## Rules.mk
-```
 add path and build targets:
-
-
+```
 VPATH += $(LIB_PATH)/lcd_dprentice
 
 SRC += lcd_i2cmaster.c \
