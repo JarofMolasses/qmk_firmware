@@ -1,6 +1,7 @@
-## Updating QMK Core and Submodules:
+## SSOpad1.2, weird 18-key numpad thing
 ```
-git pull https://github.com/qmk/qmk_firmware.git master
-git submodule update --recursive --remote
-git push origin master
+I2C LCD support from David Prentice's code: https://www.avrfreaks.net/comment/2640876#comment-2640876
+Underglow kinda possible, if you want.
 ```
+
+
