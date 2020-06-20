@@ -1,7 +1,7 @@
 ## SSOpad, weird 18-key macro pad prototype
 
 #### I2C LCD support from David Prentice's code: https://www.avrfreaks.net/comment/2640876#comment-2640876 
-the LCD does not work properly with the teensy 2.0. The entire rightmost column dies\
+the LCD does not work properly with the teensy 2.0 yet. (The entire rightmost column stops responding when you init the lcd)\
 ah well, i like the pro micro better anyways.
 
 #### neat pictures
