@@ -46,10 +46,11 @@ void led_set_kb(uint8_t usb_led) {
     }
 }
 
+
+*/
+
 void matrix_init_kb(void) {
   // runs once when the firmware starts up
   setPinOutput(D0);
+  matrix_init_user();
 }
-*/
-
-
