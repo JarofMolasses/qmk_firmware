@@ -15,7 +15,6 @@
  */
 #include QMK_KEYBOARD_H
 
-
 #include "lcd.h"
 #include "i2cmaster.h" //fleury i2c
  //#include "i2c_master.h"  //qmk i2c
@@ -60,8 +59,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void matrix_init_user(void) {
     i2c_init();
-    lcd_init(LCD_DISP_ON_CURSOR_BLINK);
-    lcd_puts("and so on");
+    lcd_init(LCD_DISP_ON);
+    lcd_gotoxy(0, 1); lcd_puts("firmware PM1.2");
 }
 
 void matrix_scan_user(void) {
@@ -88,17 +87,22 @@ void led_set_user(uint8_t usb_led) {
 }
 
 
-/*
-//ALSO PROVEN WORKING LAYER LED 
+
+//ALSO PROVEN WORKING LAYER LED
+//coopt for LCD
 uint32_t layer_state_set_user(uint32_t state) {
     // if we are on layer 1
     if (state == 2) {
         // light indicator led 
-        PORTB &= ~(1 << PB0);  
+        //PORTB &= ~(1 << PB0);
+        lcd_home();
+        lcd_puts("NUMLOCK ON ");
 
     }else {
-        PORTB |= (1 << PB0);
+        //PORTB |= (1 << PB0);
+        lcd_home();
+        lcd_puts("NUMLOCK OFF");
     }
     return state;
 }
-*/
+
