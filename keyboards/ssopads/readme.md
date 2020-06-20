@@ -1,4 +1,8 @@
-## SSOpad, weird 18-key macro pad prototype
+# SSOpad, weird 18-key macro pad prototype
+
+## neat pictures
+V1.2 Teensy, underglow on a perfboard
+![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
 
 #### Hardware
 see PCB files at: https://github.com/JarofMolasses/SSOpad
@@ -34,10 +38,6 @@ SRC += lcd_i2cmaster.c \
 
 i have no idea how anything works
 
-
-## neat pictures
-V1.2 Teensy, underglow on a perfboard
-![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
 
 
 
