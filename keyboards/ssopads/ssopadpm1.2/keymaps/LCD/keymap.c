@@ -56,53 +56,43 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-
 void matrix_init_user(void) {
     i2c_init();
     lcd_init(LCD_DISP_ON);
-    lcd_gotoxy(0, 1); lcd_puts("firmware PM1.2");
+    lcd_puts("how the HECK");
 }
 
+/*
 void matrix_scan_user(void) {
-    switch (biton32(layer_state)) {
+}
+
+void led_set_user(uint8_t usb_led) {
+}
+*/
+
+uint32_t layer_state_set_user(uint32_t state) {
+    switch (biton32(state)) {
         case _FUNC:
             writePinLow(B0);
             writePinHigh(D5);
+            lcd_home(); lcd_puts("                ");
+            lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
             break;
 
         case _FUNC2:
             writePinHigh(B0);
             writePinLow(D5);
+
+            lcd_home(); lcd_puts("SHIFT");
             break;
 
         default:
             writePinHigh(B0);
             writePinHigh(D5);
+
+            lcd_home(); lcd_puts("                ");
+            lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
             break;
-    }
-}
-
-void led_set_user(uint8_t usb_led) {
-    //underglow
-}
-
-
-
-//ALSO PROVEN WORKING LAYER LED
-//coopt for LCD
-uint32_t layer_state_set_user(uint32_t state) {
-    // if we are on layer 1
-    if (state == 2) {
-        // light indicator led 
-        //PORTB &= ~(1 << PB0);
-        lcd_home();
-        lcd_puts("NUMLOCK ON ");
-
-    }else {
-        //PORTB |= (1 << PB0);
-        lcd_home();
-        lcd_puts("NUMLOCK OFF");
-    }
+        }
     return state;
 }
-

@@ -21,7 +21,12 @@
 // These are only required if you want to perform custom actions.
 
 /*
+void matrix_scan_kb(void) {
+  // put your looping keyboard code here
+  // runs every cycle (a lot)
 
+  matrix_scan_user();
+}
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
   // put your per-action keyboard code here
@@ -48,11 +53,6 @@ void matrix_init_kb(void) {
   
 }
 
-void matrix_scan_kb(void) {
-  // put your looping keyboard code here
-  // runs every cycle (a lot)
 
-  matrix_scan_user();
-}
 
 

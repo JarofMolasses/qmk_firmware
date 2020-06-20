@@ -49,40 +49,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 void matrix_init_user(void) {}
 
 void matrix_scan_user(void) {
-    switch (biton32(layer_state)) {
-        case _FUNC:
-            writePinLow(B0);
-            writePinHigh(D5);
-            break;
-
-        case _FUNC2:
-            writePinHigh(B0);
-            writePinLow(D5);
-            break;
-
-        default:
-            writePinHigh(B0);
-            writePinHigh(D5);
-            break;
-    }
 }
 
 void led_set_user(uint8_t usb_led) {
     //underglow
 }
 
-
-/*
-//ALSO PROVEN WORKING LAYER LED 
 uint32_t layer_state_set_user(uint32_t state) {
-    // if we are on layer 1
-    if (state == 2) {
-        // light indicator led 
-        PORTB &= ~(1 << PB0);  
+    switch (biton32(state)) {
+    case _FUNC:
+        writePinLow(B0);
+        writePinHigh(D5);
+        break;
 
-    }else {
-        PORTB |= (1 << PB0);
+    case _FUNC2:
+        writePinHigh(B0);
+        writePinLow(D5);
+        break;
+
+    default:
+        writePinHigh(B0);
+        writePinHigh(D5);
+        break;
     }
     return state;
 }
-*/
