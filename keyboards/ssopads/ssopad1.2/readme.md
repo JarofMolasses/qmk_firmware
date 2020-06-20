@@ -1,12 +1,10 @@
 # ssopad1.2
 
-![ssopad1.2](imgur.com image replace me!)
+Teensy firmware. \
+Note: due to me being dumb as hell, column 0 is connected to pin D6, the built-in LED pin. oops \
+The config.h is currently set up for cutting the trace to pin D6 and bodge that column up to C6 instead.
 
-A short description of the keyboard/project
-
-Keyboard Maintainer: [molasses](https://github.com/yourusername)  
-Hardware Supported: The PCBs, controllers supported  
-Hardware Availability: links to where you can find this hardware
+Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
 
 Make example for this keyboard (after setting up your build environment):
 
