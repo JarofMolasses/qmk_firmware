@@ -2,11 +2,9 @@
 
 ![ssopad1.2](imgur.com image replace me!)
 
-A short description of the keyboard/project
+Teensy firmware. Using v1.2 or v1.21 PCBs you have to cut the column trace to D6 and run a jumper up to C6, since D6 is the onboard LED pin. oops
 
-Keyboard Maintainer: [molasses](https://github.com/yourusername)  
-Hardware Supported: The PCBs, controllers supported  
-Hardware Availability: links to where you can find this hardware
+Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
 
 Make example for this keyboard (after setting up your build environment):
 
