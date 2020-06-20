@@ -7,7 +7,8 @@ see PCB files at: https://github.com/JarofMolasses/SSOpad
 the PCB has the reset pins of the Pro Micro broken out for a 6x3.5mm SMD tact switch underneath
 
 #### I2C LCD support based on: https://www.avrfreaks.net/comment/2640876#comment-2640876 
-Now works on Teensy! issue with lcd_init() fixed
+code: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
+Teensy incompatibility is now resolved, I think. 
 
 #### neat pictures
 V1.2 Teensy, underglow on a perfboard
