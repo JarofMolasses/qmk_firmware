@@ -3,7 +3,7 @@
 #### Hardware
 see PCB design files at: https://github.com/JarofMolasses/SSOpad
 
-#### Supports both Teensy and Pro Micro
+#### Supports both Teensy and Pro Micro (Elite-C as well, by extension)
 but use the Pro Micro, it's better
 
 
