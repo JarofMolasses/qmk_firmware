@@ -1,12 +1,7 @@
 # ssopadpm1.2
-
-![ssopadpm1.2](imgur.com image replace me!)
-
-A short description of the keyboard/project
+Pro Micro firmware. This one actually works properly with v1.2 and v1.21 boards smh
 
 Keyboard Maintainer: [molasses](https://github.com/yourusername)  
-Hardware Supported: The PCBs, controllers supported  
-Hardware Availability: links to where you can find this hardware
 
 Make example for this keyboard (after setting up your build environment):
 
