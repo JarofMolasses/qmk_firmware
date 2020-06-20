@@ -2,8 +2,8 @@
 Teensy firmware. 
 
 ### Note: on PCB v1.2, column 0 is connected to pin D6 - the built-in LED pin. oops 
-The config.h is currently set up for the following mods: \
-- cut the trace to pin D6 \
+The config.h is currently set up for the following mods: 
+- cut the trace to pin D6 
 - jumper column 0 to new pin: C6 
 
 Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
