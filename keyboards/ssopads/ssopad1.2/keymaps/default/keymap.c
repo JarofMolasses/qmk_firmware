@@ -45,48 +45,38 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-    setPinOutput(D4);
+    //setPinOutput(D4);
     //setPinOutput(D6);   //really weird stuff, prevents LED from being too bright
 
 }
 
 void matrix_scan_user(void) {
-    switch (biton32(layer_state)) {
-        case _FUNC:
-            writePinHigh(D4);
-            writePinLow(D6);
-            break;
-
-        case _FUNC2:
-            writePinHigh(D6);
-            writePinLow(D4);
-            break;
-
-        default:
-            writePinLow(D4);
-            writePinLow(D6);
-            break;
-    }
    
 }
 
 void led_set_user(uint8_t usb_led) {}
+uint32_t layer_state_set_user(uint32_t state) {
+    switch (biton32(state)) {
+    case _FUNC:
+        writePinLow(D6);
+        writePinHigh(D4);
+        break;
 
+    case _FUNC2:
+        writePinHigh(D6);
+        writePinLow(D4);       
+        break;
 
-// ALSO PROVEN WORKING LAYER LED
-/*
-uint32_t layer_state_set_kb(uint32_t state) {
-    // if we are on layer 1
-    if (state == 2) { 
-        // light indicator led
-          PORTD |= (1 << PD0);
-
-    } else {
-          PORTD &= ~(1 << PD0);
+    default:
+        writePinLow(D6);
+        writePinLow(D4);
+        break;
     }
     return state;
 }
-*/
+
+
+
 
 
 

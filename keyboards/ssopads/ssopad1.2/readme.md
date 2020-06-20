@@ -1,12 +1,12 @@
 # ssopad1.2
 
-## Teensy firmware. 
+![ssopad1.2](imgur.com image replace me!)
 
-Notes:\
--Using v1.2 or v1.21 PCBs you have to cut the column trace at pin D6 and run a jumper up to C6, since D6 is the onboard LED pin. oops\
--the I2C LCD (PCF8574) does not work with the teensy 2.0 yet. for some reason the entire rightmost column goes dead
+A short description of the keyboard/project
 
-Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
+Keyboard Maintainer: [molasses](https://github.com/yourusername)  
+Hardware Supported: The PCBs, controllers supported  
+Hardware Availability: links to where you can find this hardware
 
 Make example for this keyboard (after setting up your build environment):
 
