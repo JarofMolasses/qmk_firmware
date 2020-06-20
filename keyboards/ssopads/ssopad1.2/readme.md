@@ -2,7 +2,11 @@
 
 ![ssopad1.2](imgur.com image replace me!)
 
-Teensy firmware. Using v1.2 or v1.21 PCBs you have to cut the column trace to D6 and run a jumper up to C6, since D6 is the onboard LED pin. oops
+Teensy firmware. 
+
+Notes:\
+-Using v1.2 or v1.21 PCBs you have to cut the column trace at pin D6 and run a jumper up to C6, since D6 is the onboard LED pin. oops\
+-the I2C LCD (PCF8574) does not work with the teensy 2.0 yet. for some reason the entire rightmost column goes dead
 
 Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
 
