@@ -12,7 +12,7 @@ see: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
 cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice
 and add to qmk_firmware/lib
 
-## Rules.mk
+## rules.mk 
 see: https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk
 
 add path and build targets:
