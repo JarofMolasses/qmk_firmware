@@ -1,5 +1,8 @@
 ## SSOpad, weird 18-key macro pad prototype
 
+#### Hardware
+see PCB design files at: https://github.com/JarofMolasses/SSOpad
+
 #### Supports both Teensy and Pro Micro
 but use the Pro Micro, it's better
 
