@@ -4,7 +4,7 @@
 but use the Pro Micro, it's better
 
 
-#### I2C LCD support from David Prentice: https://www.avrfreaks.net/comment/2640876#comment-2640876 
+#### I2C LCD support based on: https://www.avrfreaks.net/comment/2640876#comment-2640876 
 this hackjob port does not yet work with Teensy. (It's fine on the Pro Micro)
 
 
