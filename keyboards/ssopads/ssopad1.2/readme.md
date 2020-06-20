@@ -1,8 +1,6 @@
 # ssopad1.2
 
-![ssopad1.2](imgur.com image replace me!)
-
-Teensy firmware. 
+##Teensy firmware. 
 
 Notes:\
 -Using v1.2 or v1.21 PCBs you have to cut the column trace at pin D6 and run a jumper up to C6, since D6 is the onboard LED pin. oops\
