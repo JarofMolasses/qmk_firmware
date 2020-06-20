@@ -1,1 +1,1 @@
-# The default keymap for ssopad1.2
+# Keymap for doing LCD things
