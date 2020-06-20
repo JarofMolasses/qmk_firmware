@@ -1,1 +1,0 @@
-# The default keymap for ssopad1.2
