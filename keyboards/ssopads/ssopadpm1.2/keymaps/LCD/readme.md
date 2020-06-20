@@ -1,4 +1,4 @@
-i have no idea 
+i have no idea how anything works
 
 ## Update QMK Core and Submodules:
 ```
