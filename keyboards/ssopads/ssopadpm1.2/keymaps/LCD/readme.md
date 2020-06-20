@@ -10,8 +10,8 @@ git push origin master
 ## Add LCD library:
 see: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
 
-cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice
-and add to qmk_firmware/lib
+cop  [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice\
+I added to qmk_firmware/lib, but this may not be necessarily the best.
 
 ## rules.mk 
 see: https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk
