@@ -112,7 +112,10 @@ void lcd_init(unsigned char command)
     _lcd_maxx = LCD_DISP_LENGTH;
     _base_y[2] = _base_y[0] + _lcd_maxx;
     _base_y[3] = _base_y[1] + _lcd_maxx;
-    DDRB |= (1<<5); PORTB |= (1<<5);
+
+    //DDRB |= (1 << 5); PORTB |= (1 << 5);
+    DDRC |= (1<<5); PORTC|= (1<<5);   //Port B seems to not play nice with Teensy 2.0 pin mappings
+
     I2C_INIT();
     _delay_ms(30);               // 30 ms Delay nach power-up
     ret |= I2C_WRITESEQ(PCF8574A, nibbleval30, 3);    //0x3- 8-bit  
@@ -121,7 +124,10 @@ void lcd_init(unsigned char command)
     ret |= I2C_WRITESEQ(PCF8574A, nibbleval30, 3);    //0x3- 8-bit
     ret |= I2C_WRITESEQ(PCF8574A, nibbleval20, 3);    //0x2- 8-bit
 	ret |= wr_lcd_mode(0x28, 0);                      //0x28 set 4-bit 2 lines
-    if (ret) { PORTB &= ~(1<<5); }
+
+    //if (ret) { PORTB &= ~(1 << 5); }
+    if (ret) { PORTC &= ~(1<<5); }   //Port B issues again
+
     wr_lcd_mode(0x0c, 0);
     wr_lcd_mode(0x06, 0);
     wr_lcd_mode(0x01, 0);
