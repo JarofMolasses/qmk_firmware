@@ -8,14 +8,21 @@
 **************************************************************************/
 #include <inttypes.h>
 #include <compat/twi.h>
+#include <util/delay.h>
+//#include <time.h> //can also try using tmk_core timer.h
+#include "timer.h"  //tmk timer
 
 #include "i2cmaster.h"
 //#include "i2c_master.h
 
-
 /* define CPU frequency in Mhz here if not defined in Makefile */
 #ifndef F_CPU
-#define F_CPU 4000000UL
+#define F_CPU 16000000UL
+#endif
+
+//time.h define clocks per second
+#ifndef CLOCKS_PER_SEC
+#define CLOCKS_PER_SEC F_CPU
 #endif
 
 /* I2C clock in Hz */
@@ -41,30 +48,42 @@ void i2c_init(void)
 *************************************************************************/
 unsigned char i2c_start(unsigned char address)
 {
+    uint16_t timeout = 1000;
     uint8_t   twst;
+   
+    // send START condition
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
 
-	// send START condition
-	TWCR = (1<<TWINT) | (1<<TWSTA) | (1<<TWEN);
+    //while (!(TWCR & (1 << TWINT)));  //original Fleury: wait until transmission completed
+    uint16_t startTime = timer_read(); 
 
-	// wait until transmission completed
-	while(!(TWCR & (1<<TWINT)));
 
-	// check value of TWI Status Register. Mask prescaler bits.
-	twst = TW_STATUS & 0xF8;
-	if ( (twst != TW_START) && (twst != TW_REP_START)) return 1;
+    //wait for transmission to complete, with timeout
+    while (!(TWCR & (1<<TWINT))) {
+        if ((timer_read() - startTime) > timeout)
+        {
+            return 1;               //give up and exit
+        }
+    }
 
-	// send device address
-	TWDR = address;
-	TWCR = (1<<TWINT) | (1<<TWEN);
 
-	// wail until transmission completed and ACK/NACK has been received
-	while(!(TWCR & (1<<TWINT)));
+    // check value of TWI Status Register. Mask prescaler bits.
+    twst = TW_STATUS & 0xF8;
+    if ((twst != TW_START) && (twst != TW_REP_START)) return 1;
 
-	// check value of TWI Status Register. Mask prescaler bits.
-	twst = TW_STATUS & 0xF8;
-	if ( (twst != TW_MT_SLA_ACK) && (twst != TW_MR_SLA_ACK) ) return 1;
+    // send device address
+    TWDR = address;
+    TWCR = (1 << TWINT) | (1 << TWEN);
 
-	return 0;
+    //original: wait until transmission completed and ACK/NACK has been received
+    while (!(TWCR & (1 << TWINT)));
+
+    // check value of TWI Status Register. Mask prescaler bits.
+    twst = TW_STATUS & 0xF8;
+    if ((twst != TW_MT_SLA_ACK) && (twst != TW_MR_SLA_ACK)) return 1;
+
+    return 0;
+    
 
 }/* i2c_start */
 
@@ -72,13 +91,13 @@ unsigned char i2c_start(unsigned char address)
 /*************************************************************************
  Issues a start condition and sends address and transfer direction.
  If device is busy, use ack polling to wait until device is ready
- 
+
  Input:   address and transfer direction of I2C device
+ FIX to add:   timeout for i2c scanning
 *************************************************************************/
 void i2c_start_wait(unsigned char address)
 {
     uint8_t   twst;
-
 
     while ( 1 )
     {
@@ -149,7 +168,6 @@ void i2c_stop(void)
 
 /*************************************************************************
   Send one byte to I2C device
-  
   Input:    byte to be transfered
   Return:   0 write successful 
             1 write failed
@@ -201,3 +219,5 @@ unsigned char i2c_readNak(void)
     return TWDR;
 
 }/* i2c_readNak */
+
+

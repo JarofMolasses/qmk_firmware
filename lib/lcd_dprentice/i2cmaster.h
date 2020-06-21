@@ -161,6 +161,8 @@ extern unsigned char i2c_readAck(void);
  */
 extern unsigned char i2c_readNak(void);
 
+
+
 /** 
  @brief    read one byte from the I2C device
  

@@ -44,7 +44,7 @@
  *  @name  Definitions for MCU Clock Frequency
  *  Adapt the MCU clock frequency in Hz to your target. 
  */
-#define XTAL 4000000              /**< clock frequency in Hz, used to calculate delay timer */
+#define XTAL 16000000              /**< clock frequency in Hz, used to calculate delay timer */
 
 
 /**
@@ -83,7 +83,7 @@
  *  ports by adapting the LCD_DATAx_PORT and LCD_DATAx_PIN definitions.
  *  
  */
-#define LCD_PORT         PORTA        /**< port for the LCD lines   */
+#define LCD_PORT         PORTA       /**< port for the LCD lines   */
 #define LCD_DATA0_PORT   LCD_PORT     /**< port for 4bit data bit 0 */
 #define LCD_DATA1_PORT   LCD_PORT     /**< port for 4bit data bit 1 */
 #define LCD_DATA2_PORT   LCD_PORT     /**< port for 4bit data bit 2 */
@@ -98,6 +98,7 @@
 #define LCD_RW_PIN       5            /**< pin  for RW line         */
 #define LCD_E_PORT       LCD_PORT     /**< port for Enable line     */
 #define LCD_E_PIN        6            /**< pin  for Enable line     */
+
 
 #elif defined(__AVR_AT90S4414__) || defined(__AVR_AT90S8515__) || defined(__AVR_ATmega64__) || \
       defined(__AVR_ATmega8515__)|| defined(__AVR_ATmega103__) || defined(__AVR_ATmega128__) || \
@@ -182,9 +183,9 @@
                     \b LCD_DISP_ON display on, cursor off\n
                     \b LCD_DISP_ON_CURSOR display on, cursor on\n
                     \b LCD_DISP_ON_CURSOR_BLINK display on, cursor on flashing             
- @return  none
+ @return   none //0 if init successful, 1 if init unsucc ideally
 */
-extern void lcd_init(uint8_t dispAttr);
+extern int lcd_init(uint8_t dispAttr);    //normally void
 
 
 /**
