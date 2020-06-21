@@ -13,42 +13,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include QMK_KEYBOARD_H
+
 
 #include "lcd.h"
+#include "i2cmaster.h" //fleury i2c
+//#include "i2c_master.h"  //qmk i2c
+#include "print.h"
 
-#include "i2cmaster.h"
-
-
-/*
+#include <stdbool.h>
 #include <avr/io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
-*/
 
-#include QMK_KEYBOARD_H
+bool lcd = false;   //lcd available flag
 
-enum ssopad_layers { _BASE, _FUNC, _FUNC2};
+// Defines the keycodes used by our macros in process_record_user
+enum ssopad_layers { _BASE, _FUNC,_FUNC2};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT( /* function2 */
 	KC_BSPC, KC_GRV,                      \
     KC_HOME, KC_UP,   KC_PGUP,   KC_VOLU, \
     KC_LEFT, KC_DOWN, KC_RIGHT,  KC_VOLD, \
-	KC_END,  KC_NO,   KC_PGDN,   KC_LGUI, \
-	KC_INS,   TG(1),   KC_DEL,    MO(2)   \
+	KC_END,  KC_NO,   KC_PGDN,   KC_LGUI,  \
+	KC_INS,   TG(1),   KC_DEL,    MO(2)  \
     ),
 
     [_FUNC] = LAYOUT( /* Base */
-	KC_BSPC, KC_PSLS,                 \
-    KC_7,    KC_8,   KC_9,   KC_PAST, \
-    KC_4,    KC_5,   KC_6,   KC_PMNS, \
-	KC_1,    KC_2,   KC_3,   KC_PPLS, \
-	KC_0,    KC_TRNS, KC_PDOT, LT(2, KC_PENT) \
+	KC_BSPC, KC_PSLS,               \
+    KC_7,  KC_8,   KC_9,   KC_PAST, \
+    KC_4,  KC_5,   KC_6,   KC_PMNS, \
+	KC_1,  KC_2,   KC_3,   KC_PPLS, \
+	KC_0,  KC_TRNS, KC_PDOT, LT(2, KC_PENT) \
     ),
-     
+   
     [_FUNC2] = LAYOUT( /* function */
 	BL_TOGG, KC_NO,                  \
     KC_F7,  KC_F8,   KC_F9,   BL_INC,  \
@@ -60,47 +62,57 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-    //setPinOutput(D4);
-    //setPinOutput(D6);   //really weird stuff, prevents LED from being too bright
 
+    if(lcd_init(LCD_DISP_ON) == 0)      //check for lcd
+    {
+        lcd = true;                     //raise lcd flag if init successful
+        lcd_clrscr();
+        lcd_puts("PRO MICRO v1.2");
+    }
    
-    lcd_init(LCD_DISP_ON);
-    lcd_clrscr();
-    lcd_puts("ssopad1.2 teensy");
-    
 }
+
 
 void matrix_scan_user(void) {
 }
 
-void led_set_user(uint8_t usb_led) {}
+void led_set_user(uint8_t usb_led) {
+}
 
 
 uint32_t layer_state_set_user(uint32_t state) {
     switch (biton32(state)) {
-    case _FUNC:
-        writePinLow(D6);
-        writePinHigh(D4);
-        lcd_home(); lcd_puts("                ");
-        lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
-        break;
+        case _FUNC:
+            writePinLow(B0);
+            writePinHigh(D5);
 
-    case _FUNC2:
-        writePinHigh(D6);
-        writePinLow(D4);
+            if(lcd){
+                lcd_home(); lcd_puts("                ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
+            }
 
-        lcd_home(); lcd_puts("SHIFT");
-        break;
+            break;
 
-    default:
-        writePinLow(D6);
-        writePinLow(D4);
+        case _FUNC2:
+            writePinHigh(B0);
+            writePinLow(D5);
 
-        lcd_home(); lcd_puts("                ");
-        lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
-        break;
-    }
+            if (lcd) {
+                lcd_home(); lcd_puts("SHIFT");
+            }
+
+            break;
+
+        default:
+            writePinHigh(B0);
+            writePinHigh(D5);
+
+            if(lcd){
+                lcd_home(); lcd_puts("                ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
+            }
+
+            break;
+        }
     return state;
 }
-
-
