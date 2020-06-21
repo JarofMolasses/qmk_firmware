@@ -15,16 +15,21 @@
  */
 #include QMK_KEYBOARD_H
 
+
 #include "lcd.h"
 #include "i2cmaster.h" //fleury i2c
- //#include "i2c_master.h"  //qmk i2c
+//#include "i2c_master.h"  //qmk i2c
+#include "print.h"
 
+#include <stdbool.h>
 #include <avr/io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+
+bool lcd = false;   //lcd available flag
 
 // Defines the keycodes used by our macros in process_record_user
 enum ssopad_layers { _BASE, _FUNC,_FUNC2};
@@ -57,41 +62,56 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-    i2c_init();
-    lcd_init(LCD_DISP_ON);
-    lcd_puts("how the HECK");
+
+    if(lcd_init(LCD_DISP_ON) == 0)      //check for lcd
+    {
+        lcd = true;                     //raise lcd flag if init successful
+        lcd_clrscr();
+        lcd_puts("PRO MICRO v1.2");
+    }
+   
 }
 
-/*
+
 void matrix_scan_user(void) {
 }
 
 void led_set_user(uint8_t usb_led) {
 }
-*/
+
 
 uint32_t layer_state_set_user(uint32_t state) {
     switch (biton32(state)) {
         case _FUNC:
             writePinLow(B0);
             writePinHigh(D5);
-            lcd_home(); lcd_puts("                ");
-            lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
+
+            if(lcd){
+                lcd_home(); lcd_puts("                ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
+            }
+
             break;
 
         case _FUNC2:
             writePinHigh(B0);
             writePinLow(D5);
 
-            lcd_home(); lcd_puts("SHIFT");
+            if (lcd) {
+                lcd_home(); lcd_puts("SHIFT");
+            }
+
             break;
 
         default:
             writePinHigh(B0);
             writePinHigh(D5);
 
-            lcd_home(); lcd_puts("                ");
-            lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
+            if(lcd){
+                lcd_home(); lcd_puts("                ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
+            }
+
             break;
         }
     return state;
