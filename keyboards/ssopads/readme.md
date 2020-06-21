@@ -26,7 +26,7 @@ see: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
 I used these: [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice\
 I've since made quite a few changes to these, in order to make it work with the Teensy (port B5 was being used in the original) and to add cold-swapping LCDs possible. (with Fleury's I2C library stock, powering on the keyboard without an LCD attached would lock up the firmware.) 
 
-### changes to rules.mk 
+### Changes to rules.mk 
 see: https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk \
 add path and build targets:
 ```
@@ -35,13 +35,13 @@ VPATH += $(LIB_PATH)/lcd_dprentice
 SRC += lcd_i2cmaster.c \
        twimaster.c \
 ```
-### changes to [keymap]/config.h
+### Changes to [keymap]/config.h
 add I2C address override, if your LCD does not use 0x27:
 ```
 #define PCF8574A 0x3F //for example, set address to 0x3F
 ```
 
-### calling LCD functions 
+### Calling LCD functions 
 Generally, I'd use keymap.c to run the LCD, something like:
 ```
 #include "lcd.h"
@@ -56,7 +56,11 @@ matrix_init_user(){
     if(lcd_init(LCD_DISP_ON) == 0)
     {
         lcd = true;
+        
         //other startup screen stuff, if you like
+        lcd_clrscr();
+        lcd_puts("h");
+        lcd_home();
     }
 }
 ```
