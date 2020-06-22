@@ -4,10 +4,6 @@
 V1.2 Teensy, with underglow 
 ![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
 
-V1.2 Pro Micro, with the I2C LCD hack
-![V1.2 Pro Micro, LCD](https://user-images.githubusercontent.com/33560291/85238368-4cc23c00-b3e2-11ea-81de-8bc2fac65465.png)
-
-
 ### Hardware
 see PCB files at: https://github.com/JarofMolasses/SSOpad
 
