@@ -59,10 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-    //setPinOutput(D4);
-    //setPinOutput(D6);   //really weird stuff, prevents LED from being too bright
 
-   
     if (lcd_init(LCD_DISP_ON) == 0) {
         lcd = true;
         lcd_clrscr();
