@@ -12,7 +12,7 @@
 #include <compat/twi.h>
 #include <util/delay.h>
 //#include <time.h> //built-in C timer
-#include "timer.h"  //tmk timer
+#include "timer.h"  //tmk_core timer
 
 #include "i2cmaster.h"
 //#include "i2c_master.h
