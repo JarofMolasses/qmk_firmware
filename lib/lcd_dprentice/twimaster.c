@@ -5,6 +5,8 @@
 * Software: AVR-GCC 3.4.3 / avr-libc 1.2.3
 * Target:   any AVR device with hardware TWI 
 * Usage:    API compatible with I2C Software Library i2cmaster.h
+
+//Adapted by Joshua Ho for use with I2C LCDs in QMK firmware
 **************************************************************************/
 #include <inttypes.h>
 #include <compat/twi.h>
@@ -45,6 +47,8 @@ void i2c_init(void)
 /*************************************************************************	
   Issues a start condition and sends address and transfer direction.
   return 0 = device accessible, 1= failed to access device
+
+  //added: start condition timeout if no devices respond
 *************************************************************************/
 unsigned char i2c_start(unsigned char address)
 {
