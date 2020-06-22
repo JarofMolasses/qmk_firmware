@@ -29,7 +29,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
-bool lcd = false;   //lcd available flag
+//lcd available flag
+bool lcd = false;   
 
 // Defines the keycodes used by our macros in process_record_user
 enum ssopad_layers { _BASE, _FUNC,_FUNC2};
@@ -67,6 +68,12 @@ void matrix_init_user(void) {
     {
         lcd = true;                     //raise lcd flag if init successful
         lcd_clrscr();
+        lcd_puts("this machine");
+        lcd_gotoxy(0, 1);
+        lcd_puts("kills fascists");
+        _delay_ms(3000);
+
+        lcd_clrscr();
         lcd_puts("PRO MICRO v1.2");
     }
    
@@ -82,23 +89,23 @@ void led_set_user(uint8_t usb_led) {
 
 uint32_t layer_state_set_user(uint32_t state) {
     switch (biton32(state)) {
+        case _FUNC2:
+            writePinHigh(B0);
+            writePinLow(D5);
+
+            if (lcd) {
+                lcd_home(); lcd_puts("SHIFT          ");
+            }
+
+            break;
+
         case _FUNC:
             writePinLow(B0);
             writePinHigh(D5);
 
             if(lcd){
                 lcd_home(); lcd_puts("                ");
-                lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM   ");
-            }
-
-            break;
-
-        case _FUNC2:
-            writePinHigh(B0);
-            writePinLow(D5);
-
-            if (lcd) {
-                lcd_home(); lcd_puts("SHIFT");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM     ");
             }
 
             break;
@@ -109,7 +116,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 
             if(lcd){
                 lcd_home(); lcd_puts("                ");
-                lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE    ");
             }
 
             break;

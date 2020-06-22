@@ -6,7 +6,7 @@
 * Target:   any AVR device with hardware TWI 
 * Usage:    API compatible with I2C Software Library i2cmaster.h
 
-//Adapted by Joshua Ho for use with I2C LCDs in QMK firmware
+With tweaks for use with QMK firmware and LCDs.
 **************************************************************************/
 #include <inttypes.h>
 #include <compat/twi.h>
@@ -15,7 +15,6 @@
 #include "timer.h"  //tmk_core timer
 
 #include "i2cmaster.h"
-//#include "i2c_master.h
 
 /* define CPU frequency in Mhz here if not defined in Makefile */
 #ifndef F_CPU
@@ -58,9 +57,12 @@ unsigned char i2c_start(unsigned char address)
     // send START condition
     TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
 
-    //while (!(TWCR & (1 << TWINT)));  //original Fleury: wait until transmission completed
-    uint16_t startTime = timer_read(); 
+    //original Fleury: wait until transmission completed
+    //while (!(TWCR & (1 << TWINT)));
 
+
+    //start timing after START condition is sent
+    uint16_t startTime = timer_read(); 
 
     //wait for transmission to complete, with timeout
     while (!(TWCR & (1<<TWINT))) {

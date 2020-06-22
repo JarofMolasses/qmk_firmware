@@ -62,7 +62,13 @@ void matrix_init_user(void) {
     if (lcd_init(LCD_DISP_ON) == 0) {
         lcd = true;
         lcd_clrscr();
-        lcd_puts("Teensy v1.2");
+        lcd_puts("This machine");
+        lcd_gotoxy(0, 1);
+        lcd_puts("kills fascists");
+        _delay_ms(3000);
+
+        lcd_clrscr();
+        lcd_puts("TEENSY v1.2");
     }
 }
 
@@ -76,6 +82,16 @@ void led_set_user(uint8_t usb_led) {
 
 uint32_t layer_state_set_user(uint32_t state) {
     switch (biton32(state)) {
+    case _FUNC2:
+        writePinHigh(D6);
+        writePinLow(D4);
+
+        if (lcd) {
+            lcd_home(); lcd_puts("SHIFT          ");
+        }
+
+        break;
+
     case _FUNC:
         writePinLow(D6);
         writePinHigh(D4);
@@ -87,23 +103,13 @@ uint32_t layer_state_set_user(uint32_t state) {
 
         break;
 
-    case _FUNC2:
-        writePinHigh(D6);
-        writePinLow(D4);
-
-        if (lcd) {
-            lcd_home(); lcd_puts("SHIFT");
-        }
-
-        break;
-
     default:
         writePinLow(D6);
         writePinLow(D4);
 
         if (lcd) {
             lcd_home(); lcd_puts("                ");
-            lcd_gotoxy(0, 1); lcd_puts("LAYER: MAIN  "); 
+            lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE  "); 
         }
 
         break;

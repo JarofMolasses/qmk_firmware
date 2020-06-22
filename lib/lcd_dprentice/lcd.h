@@ -6,6 +6,8 @@
  File:	    $Id: lcd.h,v 1.13.2.2 2006/01/30 19:51:33 peter Exp $
  Software:  AVR-GCC 3.3
  Hardware:  any AVR device, memory mapped mode only for AT90S4414/8515/Mega
+
+ //changed lcd_init() to return int
 ***************************************************************************/
 
 /**
@@ -183,7 +185,7 @@
                     \b LCD_DISP_ON display on, cursor off\n
                     \b LCD_DISP_ON_CURSOR display on, cursor on\n
                     \b LCD_DISP_ON_CURSOR_BLINK display on, cursor on flashing             
- @return   none //0 if init successful, 1 if init unsucc ideally
+ @return   0 if init successful, 1 if init unsucc   //normally none
 */
 extern int lcd_init(uint8_t dispAttr);    //normally void
 
