@@ -19,4 +19,4 @@
 // place overrides here
 
 
-#define PCF8574A 0x27
+#define PCF8574A 0x3F
