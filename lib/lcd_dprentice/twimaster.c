@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include <compat/twi.h>
 #include <util/delay.h>
-//#include <time.h> //can also try using tmk_core timer.h
+//#include <time.h> //built-in C timer
 #include "timer.h"  //tmk timer
 
 #include "i2cmaster.h"
@@ -48,7 +48,7 @@ void i2c_init(void)
   Issues a start condition and sends address and transfer direction.
   return 0 = device accessible, 1= failed to access device
 
-  //added: start condition timeout if no devices respond
+  //added: timeout and quit if no devices respond
 *************************************************************************/
 unsigned char i2c_start(unsigned char address)
 {
@@ -97,7 +97,6 @@ unsigned char i2c_start(unsigned char address)
  If device is busy, use ack polling to wait until device is ready
 
  Input:   address and transfer direction of I2C device
- FIX to add:   timeout for i2c scanning
 *************************************************************************/
 void i2c_start_wait(unsigned char address)
 {
