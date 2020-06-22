@@ -6,8 +6,6 @@
 */
 
 
-//git test; can i push this?
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include "lcd.h"
@@ -30,4 +28,3 @@ int main(void)
         _delay_ms(1000);
     }
 }
-
