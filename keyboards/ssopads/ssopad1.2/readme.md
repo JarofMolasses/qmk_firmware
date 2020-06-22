@@ -1,6 +1,9 @@
 # ssopad1.2
 Teensy firmware. 
 
+V1.2 Teensy, with underglow 
+![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
+
 ### Note: on PCB v1.2, column 0 is connected to pin D6 - the built-in LED pin. oops 
 The config.h is currently set up for the following mods: 
 - cut the trace to pin D6 
