@@ -2,10 +2,12 @@
  * lcd_i2cmaster.c
  *
  * Created: 03/06/2014 11:08:07
- *  Author: David Prentice
+ * Author: David Prentice
+ *
+ * With tweaks for use with QMK firmware.
  */
 
-#include "config.h"   //qmk integration
+#include "config.h"   //qmk integration, reads custom PCF8574 address if needed
 
 #include <util/delay.h>
 #include "i2cmaster.h"      //Fleury I2C
@@ -13,7 +15,7 @@
 #define I2C_INIT()          i2c_init()
 
 
-//define PCF8574A address as normal 0x27 if not defined in config.h
+//define PCF8574A address as 0x27 if not defined in config.h
 #ifndef PCF8574A
 #define PCF8574A            0x27         
 #endif
@@ -47,10 +49,12 @@ static char wr_lcd_mode(unsigned char c, unsigned char mode)
     char ret = 1;
     unsigned char seq[5];
     static unsigned char backlight = 8;
+
     if (mode == 8) {
         backlight = (c != 0) ? 8 : 0;
         return I2C_WRITESEQ(PCF8574A, &backlight, 1);
     }
+
     mode |= backlight;
     seq[0] = mode;                      // EN=0, RW=0, RS=mode
     seq[1] = (c & 0xF0) | mode | 4;     // EN=1, RW=0, RS=mode
@@ -58,13 +62,15 @@ static char wr_lcd_mode(unsigned char c, unsigned char mode)
     seq[3] = (c << 4) | mode | 4;       // EN=1, RW=0, RS=mode
     seq[4] = seq[3] & ~4;               // EN=0, RW=0, RS=mode
     ret = I2C_WRITESEQ(PCF8574A, seq, 5);
+
     if (!(mode & 1) && c <= 2)
         _delay_ms(2);                    // CLS and HOME
     return ret;
 }
 
 
-//// set the lcd display position  x=0..39 y=0..3
+// set the lcd display position  x=0..39 y=0..3
+//
 //void lcd_gotoxy(unsigned char x, unsigned char y)  
 //{
 //    wr_lcd_mode(0x80 | (_base_y[y] | x), 0);
