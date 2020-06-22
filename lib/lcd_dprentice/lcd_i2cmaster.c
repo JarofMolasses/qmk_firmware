@@ -157,10 +157,10 @@ int lcd_init(uint8_t dispAttr)
     uint8_t ret = 0;
 
 
-    //check for I2C_start() timeout
+    //check for I2C_start() timeout (returns 1 if init failed)
     _delay_ms(30);
     if (i2c_start(PCF8574A << 1)) {
-        return 1;
+        return 1;               //quit if i2c_start timeout
     }
     i2c_stop();
 
