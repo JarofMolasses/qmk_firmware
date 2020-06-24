@@ -15,11 +15,15 @@ the PCB has the reset pins of the Pro Micro broken out for a 6x3.5mm SMD tact sw
 I could not find any examples of using I2C-backpacked HD44780 LCDs in QMK. This might be trivial to do with just base QMK libraries, but that kind of goes over my head 
 
 ### Update QMK Core and Submodules:
+(After defining remotes)
 ```
-git pull https://github.com/qmk/qmk_firmware.git master
+git fetch upstream master
+git checkout origin [branch]
+git merge upstream/[branch]
+git push origin [branch]
 git submodule update --recursive --remote
-git push origin master
 ```
+
 ### Add I2C LCD library (with some tweaks):
 see updated code: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
 
@@ -40,6 +44,15 @@ add I2C address override, if your LCD does not use 0x27:
 ```
 #define PCF8574A 0x3F //for example, set address to 0x3F
 ```
+### Hardware
++5V and GND, of course. Use the RAW pin on the Pro Micro to bypass the board's 3V regulator\
+I2C on the Teensy:
+- D0 -> SCL
+- D1 -> SDA
+
+I2C on the Pro Micro (and variants):
+- 4 -> SCL
+- 2 -> SDA
 
 ### Calling LCD functions 
 Generally, I'd use keymap.c to run the LCD, something like:
