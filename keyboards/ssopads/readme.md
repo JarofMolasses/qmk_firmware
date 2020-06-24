@@ -1,14 +1,14 @@
 # SSOpad, weird 18-key macro pad prototype
 
 ### neat pictures
-V1.2 Teensy, with underglow (that is a hacked-on perfboard, the PCBs don't have underglow by default, unfortunately)
+V1.2 Teensy, with underglow 
 ![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
 
 ### Hardware
 see PCB files at: https://github.com/JarofMolasses/SSOpad
 
 ### Supports both Teensy and Pro Micro/Elite-C
-the PCB has the reset pins of the Pro Micro broken out for a 6x3.5mm SMD switch underneath
+the PCB has the reset pins of the Pro Micro broken out for a 6x3.5mm SMD tact switch underneath
 
 
 # Adding support for PCF8574-based I2C LCDs
@@ -28,9 +28,9 @@ git submodule update --recursive --remote
 see updated code: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
 
 I used these: [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice\
-I've since made quite a few changes to these, in order to make it work with the Teensy (pin B5 was being used in the original and just wiped out a teensy column) and to make cold-swapping LCDs possible. (with Fleury's I2C library as is, powering on the keyboard without an LCD attached would lock up the firmware.) 
+I've since made quite a few changes to these, in order to make it work with the Teensy (port B5 was being used in the original) and to make cold-swapping LCDs possible. (with Fleury's I2C library as is, powering on the keyboard without an LCD attached would lock up the firmware.) 
 
-### Changes to [keymap]/rules.mk 
+### Changes to rules.mk 
 see: https://github.com/JarofMolasses/qmk_firmware/blob/master/keyboards/ssopads/ssopadpm1.2/keymaps/LCD/rules.mk \
 add path and build targets:
 ```
@@ -47,7 +47,10 @@ You can override the I2C address define and the display dimensions in config.h (
 #define LCD_LINES 4        //set number of lines to 4, default is 2
 ```
 ### Hardware
-+5V and GND, of course. Use the RAW pin on the Pro Micro to bypass the board's 3V regulator\
+Note: this LCD project was a real afterthought so the v1.2 PCBs are not designed for it - see bodge wires and some sheet metal brackets: 
+![V1.2 Pro Micro, LCD](https://user-images.githubusercontent.com/33560291/85238368-4cc23c00-b3e2-11ea-81de-8bc2fac65465.png)
+
+Wiring: +5V and GND, of course. Use the RAW pin on the 3.3V Pro Micros to bypass the board's regulator\
 I2C on the Teensy:
 - D0 -> SCL
 - D1 -> SDA
@@ -79,8 +82,3 @@ matrix_init_user(){
     }
 }
 ```
-
-
-
-
-
