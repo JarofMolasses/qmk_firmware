@@ -102,10 +102,10 @@ void lcd_home(void)
     _lcd_x = _lcd_y = 0;
 }
 
-
+//added line wrap setting
 void lcd_putc(char c)
 {
-    if (_lcd_x>=_lcd_maxx || c == '\n')
+    if ((_lcd_x>=_lcd_maxx || c == '\n') && LCD_WRAP_LINES)
     {
         lcd_gotoxy(0,++_lcd_y);
     }
