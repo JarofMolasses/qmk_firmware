@@ -47,7 +47,10 @@ You can override the I2C address define and the display dimensions in config.h (
 #define LCD_LINES 4        //set number of lines to 4, default is 2
 ```
 ### Hardware
-+5V and GND, of course. Use the RAW pin on the Pro Micro to bypass the board's 3V regulator\
+Note: this LCD project was a real afterthought so the v1.2 PCBs are not designed for it - see bodge wires and some sheet metal brackets: 
+![V1.2 Pro Micro, LCD](https://user-images.githubusercontent.com/33560291/85238368-4cc23c00-b3e2-11ea-81de-8bc2fac65465.png)
+
+Wiring: +5V and GND, of course. Use the RAW pin on the 3.3V Pro Micros to bypass the board's regulator\
 I2C on the Teensy:
 - D0 -> SCL
 - D1 -> SDA
