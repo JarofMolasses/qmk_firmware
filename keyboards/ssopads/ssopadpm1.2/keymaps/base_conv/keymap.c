@@ -75,7 +75,7 @@ const uint8_t bufferMax = 16;
 
 int inArray[10];                            //user input array
 char outbuffer[16];                         //output string buffer
-int val;                                    //interpret the value of the input array in int  
+unsigned int val;                                    //interpret the value of the input array in int  
 uint8_t pos = 0;                            //array index
 
 uint8_t displayX = 0;               //display start x position for input readout
