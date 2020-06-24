@@ -157,7 +157,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void matrix_init_user(void) {
 
-    if(lcd_init(LCD_DISP_ON_CURSOR_BLINK) == 0)      //init and check for lcd
+    if(lcd_init(LCD_DISP_ON_CURSOR) == 0)      //init and check for lcd
     {
         lcd = 1;                     //raise lcd flag if init successful
 
@@ -665,4 +665,6 @@ void printOutput(uint8_t base) {
 
         printDecOut();
     }
+
+    lcd_gotoxy(displayX, displayY);
 }
