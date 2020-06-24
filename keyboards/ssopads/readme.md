@@ -51,8 +51,8 @@ I2C on the Teensy:
 - D1 -> SDA
 
 I2C on the Pro Micro (and variants):
-- 4 -> SCL
-- 2 -> SDA
+- Pin 3 -> SCL
+- Pin 2 -> SDA
 
 ### Calling LCD functions 
 Generally, I'd use keymap.c to run the LCD, something like:
