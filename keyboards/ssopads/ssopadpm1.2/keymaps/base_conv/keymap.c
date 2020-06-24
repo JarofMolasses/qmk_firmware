@@ -533,7 +533,7 @@ void resetInput(void) {
     pos = 0;
 }
 
-//clear character array; fill with line endings
+//clear character array; fill with string terminators
 void clearArray(char arr[]) {
     for (int i = 0; i < bufferMax; i++)
     {
