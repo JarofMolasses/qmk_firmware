@@ -76,7 +76,7 @@ const uint8_t bufferMax = 16;
 
 int inArray[10];                            //user input array
 char outbuffer[16];                         //output string buffer
-int val;                                    //interpret the value of the input array in int  
+unsigned int val;                                    //interpret the value of the input array in int  
 uint8_t pos = 0;                            //array index
 
 uint8_t displayX = 0;               //display start x position for input readout
@@ -158,7 +158,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 void matrix_init_user(void) {
 
-    if(lcd_init(LCD_DISP_ON_CURSOR_BLINK) == 0)      //init and check for lcd
+    if(lcd_init(LCD_DISP_ON_CURSOR) == 0)      //init and check for lcd
     {
         lcd = 1;                     //raise lcd flag if init successful
 
@@ -512,7 +512,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-
+//set input field coordinates
 void setDisplay(unsigned char x, unsigned char y) {
     displayX = x; displayY = y;
 }
@@ -649,21 +649,22 @@ void printOutput(uint8_t base) {
     if(base == 10)
     {
         printBinOut();
-
         printHexOut();
-    }
+        
 
     else if (base == 2)
     {
         printDecOut();
-
         printHexOut();
+
     }
 
     else if (base == 16)
     {
         printBinOut();
-
         printDecOut();
+
     }
+
+    lcd_gotoxy(displayX, displayY);
 }
