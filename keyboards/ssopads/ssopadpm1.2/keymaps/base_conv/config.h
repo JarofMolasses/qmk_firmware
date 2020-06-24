@@ -19,5 +19,5 @@
 // place overrides here
 
 
-/* I2C_dprentice address set */
+/* i2c address override */
 #define PCF8574A 0x27
