@@ -611,14 +611,23 @@ void reset(void) {
     lcd_gotoxy(displayX, displayY);
 }
 
-//for 16 char displays, binary always prints to the second line, dec to first line, etc
+//for 16 char displays
+//binary always prints to the second line, dec to first line, etc
+//I would like to keep the 0b to maintain clarity, so binary is limited to 14 characters, or 0x03fff
 void printBinOut(void) {
     clearArray(outbuffer);
     itoa(val, outbuffer, 2);
     lcd_gotoxy(0, 1);
     lcd_puts("0b              ");
     lcd_gotoxy(2, 1);
-    lcd_puts(outbuffer);
+
+    if (val <= 0x3fff) {
+        lcd_puts(outbuffer);
+    }
+    else
+    {
+        lcd_puts("   OVERFLOW");
+    }
 }
 void printDecOut(void) {
     clearArray(outbuffer);
