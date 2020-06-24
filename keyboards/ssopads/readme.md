@@ -40,9 +40,11 @@ SRC += lcd_i2cmaster.c \
        twimaster.c \
 ```
 ### Changes to [keymap]/config.h
-add I2C address override, if your LCD does not use 0x27:
+You can override the I2C address define and the display dimensions in config.h (if necessary):
 ```
-#define PCF8574A 0x3F //for example, set address to 0x3F
+#define PCF8574A 0x3F      //set address to 0x3F, default is 0x27
+#define LCD_LINE_LENGTH 20 //set line length to 20, default is 16
+#define LCD_LINES 4        //set number of lines to 4, default is 2
 ```
 ### Hardware
 +5V and GND, of course. Use the RAW pin on the Pro Micro to bypass the board's 3V regulator\
