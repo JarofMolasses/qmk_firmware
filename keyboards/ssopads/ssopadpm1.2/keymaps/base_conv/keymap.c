@@ -83,7 +83,7 @@ uint8_t displayY = 0;               //display start y position for input readout
 
 
 //base conversion functions
-void setDisplay(unsigned char x, unsigned char y);
+void setDisplay(uint8_t x, uint8_t y);
 void reset(void);
 void resetInput(void);
 void clearArray(char arr[]);
@@ -512,7 +512,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 
-void setDisplay(unsigned char x, unsigned char y) {
+void setDisplay(uint8_t x, uint8_t y) {
     displayX = x; displayY = y;
 }
 
