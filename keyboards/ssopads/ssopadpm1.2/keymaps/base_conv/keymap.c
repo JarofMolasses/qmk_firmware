@@ -273,7 +273,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 
             if(lcd){
                 lcd_home(); lcd_puts("                ");
-                lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE    ");
+                lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE     ");
             }
             break;
         }
