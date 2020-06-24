@@ -16,6 +16,7 @@
 #include QMK_KEYBOARD_H
 
 //keymap for doing cool base conversions on the LCD
+//still works as the normal ssopad:LCD does 
 
 #include "lcd.h"
 #include "i2cmaster.h" //fleury i2c
