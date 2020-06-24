@@ -74,3 +74,15 @@ __pycache__
 # prerequisites for updating ChibiOS
 /util/fmpp*
 
+keyboards/ssopads/.vs/ProjectSettings.json
+keyboards/ssopads/.vs/slnx.sqlite
+keyboards/ssopads/.vs/ssopads/v15/.suo
+keyboards/ssopads/.vs/ssopads/v15/Browse.VC.db
+keyboards/ssopads/.vs/ssopads/v15/ipch/AutoPCH/42dd41b19d6ca4bd/KEYMAP.ipch
+keyboards/ssopads/.vs/VSWorkspaceState.json
+lib/lcd_dprentice/.vs/lcd_dprentice/v15/.suo
+lib/lcd_dprentice/.vs/lcd_dprentice/v15/Browse.VC.db
+lib/lcd_dprentice/.vs/lcd_dprentice/v15/ipch/AutoPCH/42e80196a3e44e7e/LCD_I2CMASTER.ipch
+lib/lcd_dprentice/.vs/ProjectSettings.json
+lib/lcd_dprentice/.vs/slnx.sqlite
+lib/lcd_dprentice/.vs/VSWorkspaceState.json
