@@ -69,7 +69,7 @@ enum custom_keycodes {
 
 
 //base conversion setup variables
-uint8_t inputMax = 16;
+uint8_t inputDigits = 16;
 const uint8_t bufferMax = 16;
 
 uint8_t inArray[16];                     //user input array
@@ -162,26 +162,6 @@ void matrix_init_user(void) {
 
         lcd_clrscr();
         lcd_puts("PRO MICRO v1.2");
-
-
-        char testBuf[16];
-        uint32_t testVal = 70000;
-
-        lcd_clrscr();
-        lcd_puts("TESTING HEX:");
-        lcd_gotoxy(0, 1);
-        ltoa(testVal, testBuf, 16);
-        lcd_puts(testBuf);
-
-        /*
-        _delay_ms(3000);
-        clearArray(testBuf);
-        lcd_clrscr();
-        testVal = 0xfffff;
-        lcd_puts("TESTING DEC:");
-        lcd_gotoxy(0, 1);
-        sprintf(testBuf, "%lu", testVal);
-        lcd_puts(testBuf);*/
     }
 }
 
@@ -223,7 +203,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             layer = 3;
             if (lcd) {
                 hexprevious = 0;
-                inputMax = 5;
+                inputDigits = 5;
                 setDisplay(2, 0);
 
                 resetInput();
@@ -241,7 +221,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             layer = 4;
             if (lcd) {
                 hexprevious = 0;
-                inputMax = 14;
+                inputDigits = 14;
                 setDisplay(2, 1);
                 
                 resetInput();
@@ -259,7 +239,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             layer = 5;
             if (lcd) {
                 if (!hexprevious) {             //only reset if the last layer was not hexshift
-                    inputMax = 5;
+                    inputDigits = 5;
                     setDisplay(11, 0);
 
                     resetInput();
@@ -297,7 +277,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
     case m0:
         if (record->event.pressed) {
-            if (pos < inputMax)
+            if (pos < inputDigits)
             {
                 inArray[pos] = 0;
                 pos++;
@@ -309,7 +289,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m1:
         if (record->event.pressed) {
-            if (pos < inputMax)
+            if (pos < inputDigits)
             {
                 inArray[pos] = 1;
                 pos++;
@@ -321,7 +301,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m2:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 2;
                 pos++;
 
@@ -333,7 +313,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m3:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 3;
                 pos++;
 
@@ -344,7 +324,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m4:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 4;
                 pos++;
 
@@ -355,7 +335,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m5:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 5;
                 pos++;
 
@@ -366,7 +346,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m6:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 6;
                 pos++;
 
@@ -377,7 +357,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m7:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 7;
                 pos++;
 
@@ -389,7 +369,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m8:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 8;
                 pos++;
 
@@ -400,7 +380,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m9:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 9;
                 pos++;
 
@@ -411,7 +391,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xa:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xa;
                 pos++;
 
@@ -422,7 +402,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xb:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xb;
                 pos++;
 
@@ -433,7 +413,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xc:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xc;
                 pos++;
 
@@ -444,7 +424,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xd:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xd;
                 pos++;
 
@@ -455,7 +435,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xe:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xe;
                 pos++;
 
@@ -466,7 +446,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case xf:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xf;
                 pos++;
 
@@ -553,7 +533,7 @@ void lcd_clearln(uint8_t y) {
 
 //set input to zero, reset index to 0
 void resetInput(void) {
-    for (uint8_t i = 0; i < inputMax; i++)
+    for (uint8_t i = 0; i < inputDigits; i++)
     {
         inArray[i] = 0;
     }
@@ -573,18 +553,7 @@ void clearArray(char arr[]) {
 void intVal(uint8_t base) {
     val = 0;
 
-    uint16_t multiplier = 1;
-
-    /*
-    int i = pos-1;        //start at LSB, exponent 0
-
-    while(i >= 0)        //run through each digit
-    {
-        val += (inArray[i] * multiplier);
-        multiplier *= base;
-        i--; 
-    }
-    */
+    uint32_t multiplier = 1;                //needs the 32bit multiplier here to handle bigge number
 
     for (int i = pos - 1; i >= 0; i--)
     {
@@ -634,10 +603,9 @@ void reset(void) {
 }
 
 //for 16 char displays
-//why the heck does the hex display still overflow at >65535
 void printBinOut(void) {
     clearArray(outbuffer);
-    utoa(val, outbuffer, 2);
+    ultoa(val, outbuffer, 2);
     lcd_gotoxy(0, 1);
     lcd_puts("0b             ");
     lcd_gotoxy(2, 1);
@@ -658,7 +626,7 @@ void printDecOut(void) {
 
     lcd_home();
     lcd_puts("d      ");
-    lcd_gotoxy(2, 0);
+    lcd_gotoxy(1, 0);
     lcd_puts(outbuffer);
 }
 void printHexOut(void) {
