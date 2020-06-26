@@ -291,9 +291,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 inArray[pos] = 0;
                 pos++;
 
-                
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -305,10 +303,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 inArray[pos] = 1;
                 pos++;
 
-                
-
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -319,10 +314,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 inArray[pos] = 2;
                 pos++;
 
-                
-
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -334,10 +326,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 inArray[pos] = 3;
                 pos++;
 
-                
-
                 printInput();printOutput();
-               
             }
         }
         break;
@@ -349,7 +338,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;
 
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -361,7 +349,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;
 
                 printInput(); printOutput();
-                
             }
         }
         break;
@@ -373,7 +360,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++; 
 
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -385,7 +371,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++; 
 
                 printInput();printOutput();
-             
             }
 
         }
@@ -398,7 +383,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;
 
                 printInput();printOutput();
-                
             }
         }
         break;
@@ -410,7 +394,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;  
 
                 printInput();printOutput();
-              
             }
         }
         break;
@@ -422,7 +405,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++; 
 
                 printInput();printOutput();
-               
             }
         }
         break;
@@ -434,7 +416,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;  
 
                 printInput();printOutput();
-              
             }
         }
         break;
@@ -446,7 +427,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;  
 
                 printInput();printOutput();
-              
             }
         }
         break;
@@ -458,8 +438,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;    
 
                 printInput();printOutput();
-            
-
             }
         }
         break;
@@ -483,7 +461,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos++;  
 
                 printInput();printOutput();
-               
             }
         }
         break;
@@ -541,7 +518,6 @@ void clearArray(char arr[]) {
 }
 
 
-
 //clear everything and print current state of input array to LCD to displayX, displayY
 void printInput(void) {
 
@@ -591,8 +567,10 @@ void printBinOut(uint8_t base) {
     lcd_gotoxy(0, 1);
     lcd_puts("0b");
 
-    //display overflow prevention,
-    //because this function seems to cause some display glitches when it overflows 
+    /*
+    display overflow prevention,
+    because this function seems to cause some display glitches when it overflows
+    */
     if(val <= 0x3fff)    
     {
         ultoa(val, outbuffer, 2);
@@ -644,7 +622,8 @@ void printOutput(void) {
         printBinOut(16);
         printDecOut(16);
     }
-    lcd_gotoxy(displayX, displayY);
+    
+    lcd_gotoxy(displayX, displayY);     //return cursor to input field 
 }
 
 
