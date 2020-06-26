@@ -69,7 +69,6 @@ void setDisplay(uint8_t x, uint8_t y);
 void reset(void);
 void resetInput(void);
 void clearArray(char[]);
-//void intVal(uint32_t);              //does not work in startup test
 uint32_t intVal(uint8_t);            //works in startup test
 
 void printInput(void);
@@ -153,29 +152,13 @@ void matrix_init_user(void) {
 
         //pos = 7;
         //lcd_clrscr();
-        //lcd_puts("HEX:");
+        //lcd_puts("TEST HEX:");
 
         //lcd_gotoxy(9, 0);
         //ultoa(intVal(10), outbuffer, 16);
         //lcd_puts(outbuffer);
 
     }
-}
-
-//compute value of input array in int 
-uint32_t intVal(uint8_t base)
-{
-    uint32_t val = 0;
-
-    uint32_t multiplier = 1;
-
-    for (int i = pos - 1; i >= 0; i--)
-    {
-        val += multiplier * inArray[i];
-        multiplier *= base;
-    }
-
-    return val;
 }
 
 /*
@@ -489,6 +472,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+//compute value of input array in int 
+uint32_t intVal(uint8_t base)
+{
+    uint32_t val = 0;
+
+    uint32_t multiplier = 1;
+
+    for (int i = pos - 1; i >= 0; i--)
+    {
+        val += multiplier * inArray[i];
+        multiplier *= base;
+    }
+
+    return val;
+}
+
 void setDisplay(uint8_t x, uint8_t y) {
     displayX = x; displayY = y;
 }
@@ -521,7 +520,7 @@ void clearArray(char arr[]) {
 //clear everything and print current state of input array to LCD to displayX, displayY
 void printInput(void) {
 
-    lcd_clrscr();                     //just bloody erase the whole thing
+    lcd_clrscr();                           //just bloody erase the whole thing
     if (layer == DEC)                       //rewrite the previous legend
     {
         //lcd_puts("d");
@@ -568,8 +567,7 @@ void printBinOut(uint8_t base) {
     lcd_puts("0b");
 
     /*
-    display overflow prevention,
-    because this function seems to cause some display glitches when it overflows
+    display overflow prevention because it seems like the display doesn't overflow very gracefully
     */
     if(val <= 0x3fff)    //i like the 0b prefix for clarity, so the maximum binary width is 14-bit on the 16x2 LCD
     {
@@ -582,8 +580,7 @@ void printBinOut(uint8_t base) {
 void printDecOut(uint8_t base) {
     clearArray(outbuffer);
 
-    //ultoa(intVal(base), outbuffer, 10);             //reminder: itoa returns negative two's complement
-    sprintf(outbuffer, "%lu", intVal(base));          //maybe use sprintf for decimals
+    ultoa(intVal(base), outbuffer, 10);           //use ultoa() for unsigned 32bit ints
 
     lcd_gotoxy(0,0);
     lcd_puts("        ");
