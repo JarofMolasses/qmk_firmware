@@ -8,4 +8,4 @@ I used QMK macros to run the code (does not send anything to the host computer f
 Notes:\
 -Strings seem to be rather large, limit them as much as possible\
 -Entering some really big numbers like 50000000 might actually still break stuff (which is partially why the decimal input is capped at 6 digits)\
--we'll deal with that later, when we actually have a big enough display\
+-we'll deal with that later, when we actually have a big enough display 
