@@ -16,7 +16,12 @@
 #include QMK_KEYBOARD_H
 
 //keymap for doing cool base conversions on the LCD
-//note: Strings use a lot of storage, limit those
+/*
+note:
+-Strings use a lot of storage, limit those
+-Very big numbers might still do some funny stuff in the backend,
+but we'll deal with those when we get the 20x4 display. 
+*/
 
 #include "lcd.h"
 #include "i2cmaster.h" //fleury i2c
@@ -69,7 +74,7 @@ enum custom_keycodes {
 
 
 //base conversion setup variables
-uint8_t inputDigits = 16;
+uint8_t inputDigits = 16;                //max number of input digits
 const uint8_t bufferMax = 16;
 
 uint8_t inArray[16];                     //user input array
@@ -203,8 +208,8 @@ uint32_t layer_state_set_user(uint32_t state) {
             layer = 3;
             if (lcd) {
                 hexprevious = 0;
-                inputDigits = 5;
-                setDisplay(2, 0);
+                inputDigits = 6;
+                setDisplay(1, 0);
 
                 resetInput();
                 clearArray(outbuffer);
