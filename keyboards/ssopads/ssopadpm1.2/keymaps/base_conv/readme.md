@@ -5,8 +5,4 @@ I used QMK macros to run the code (does not send anything to the host computer f
 
 ![image](https://user-images.githubusercontent.com/33560291/85812099-9d080980-b714-11ea-8366-1add45b196e2.png)
 
-Notes:\
--Strings are large, limit them as much as possible\
--entering some really big numbers still breaks some stuff, which is partially why the decimal input is capped at 6 digits 
-- for instance, entering 9999999 would wipe the screen and enter a 7 in the decimal field (?)
-- i'll deal with that later
+
