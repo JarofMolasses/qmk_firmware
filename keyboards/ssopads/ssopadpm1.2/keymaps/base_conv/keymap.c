@@ -15,12 +15,12 @@
  */
 #include QMK_KEYBOARD_H
 
-//keymap for doing cool base conversions on the LCD
 /*
+keymap for doing cool base conversions on the ssopad LCD
+
 note:
--Strings use a lot of storage, limit those
--Very big numbers might still do some funny stuff in the backend,
-but we'll deal with those when we get the 20x4 display. 
+-Strings use a lot of storage, limit those;
+-Very big numbers might actually still do some funny stuff in the backend, but eh;
 */
 
 #include "lcd.h"
@@ -51,25 +51,8 @@ uint8_t hexprevious = 0;
 enum ssopad_layers{ _BASE, _FUNC, _FUNC2, DEC, BIN, HEX, HEXSHIFT};
 
 // Defines the macros for base conversion inputs
-enum custom_keycodes {
-    m0 = SAFE_RANGE,
-    m1,
-    m2,
-    m3,
-    m4,
-    m5,
-    m6,
-    m7,
-    m8,
-    m9,
-    xa,
-    xb,
-    xc,
-    xd,
-    xe,
-    xf,
-    del,
-    ent,
+enum custom_keycodes{
+    m0 = SAFE_RANGE, m1, m2, m3, m4, m5, m6, m7, m8, m9, xa, xb, xc, xd, xe, xf, del, ent,
 };
 
 
@@ -167,6 +150,8 @@ void matrix_init_user(void) {
 
         lcd_clrscr();
         lcd_puts("PRO MICRO v1.2");
+        lcd_gotoxy(3, 1);
+        lcd_puts("& knuckles");
     }
 }
 
@@ -200,7 +185,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 
             if (lcd) {
                 hexprevious = 0;
-                lcd_home(); lcd_puts("SHIFT");
+                lcd_clearln(0); lcd_home(); lcd_puts("SHIFT");
             }
             break;
             
@@ -209,13 +194,13 @@ uint32_t layer_state_set_user(uint32_t state) {
             if (lcd) {
                 hexprevious = 0;
                 inputDigits = 6;
-                setDisplay(1, 0);
+                setDisplay(0, 0);
 
                 resetInput();
                 clearArray(outbuffer);
 
                 lcd_clrscr();
-                lcd_puts("d");
+                //lcd_puts("d");
                 lcd_gotoxy(0, 1);
                 lcd_puts("DECIMAL INPUT");
                 lcd_gotoxy(displayX, displayY);
