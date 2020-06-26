@@ -106,11 +106,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [DEC] = LAYOUT(  //conv decimal entry 
-    del, TO(BIN),                  \
-    m7,  m8,   m9,   KC_NO,  \
-    m4,  m5,   m6,   res,  \
-    m1,  m2,   m3,   KC_NO, \
-    m0, TO(_BASE),   KC_NO, KC_NO  \
+    del, TO(BIN),              \
+    m7,        m8,      m9,   KC_NO, \
+    m4,        m5,      m6,   res,   \
+    m1,        m2,      m3,   KC_NO, \
+    m0, TO(_BASE),   KC_NO,   KC_NO  \
     ),
 
     [BIN] = LAYOUT(  //conv binary entry
