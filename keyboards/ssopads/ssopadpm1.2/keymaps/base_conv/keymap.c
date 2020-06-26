@@ -70,7 +70,7 @@ void reset(void);
 void resetInput(void);
 void clearArray(char[]);
 //void intVal(uint32_t);              //does not work in startup test
-uint32_t intVal2(uint8_t);            //works in startup test
+uint32_t intVal(uint8_t);            //works in startup test
 
 void printInput(void);
 void printBinOut(uint8_t);
@@ -156,14 +156,14 @@ void matrix_init_user(void) {
         //lcd_puts("HEX:");
 
         //lcd_gotoxy(9, 0);
-        //ultoa(intVal2(10), outbuffer, 16);
+        //ultoa(intVal(10), outbuffer, 16);
         //lcd_puts(outbuffer);
 
     }
 }
 
-//return a uint32_t instead of modifying a global variable
-uint32_t intVal2(uint8_t base)
+//compute value of input array in int 
+uint32_t intVal(uint8_t base)
 {
     uint32_t val = 0;
 
@@ -561,7 +561,7 @@ void reset(void) {
 //for 16 char displays
 void printBinOut(uint8_t base) {
     clearArray(outbuffer);
-    uint32_t val = intVal2(base);
+    uint32_t val = intVal(base);
 
     lcd_clearln(1);
     lcd_gotoxy(0, 1);
@@ -571,7 +571,7 @@ void printBinOut(uint8_t base) {
     display overflow prevention,
     because this function seems to cause some display glitches when it overflows
     */
-    if(val <= 0x3fff)    
+    if(val <= 0x3fff)    //i like the 0b prefix for clarity, so the maximum binary width is 14-bit on the 16x2 LCD
     {
         ultoa(val, outbuffer, 2);
         lcd_gotoxy(2, 1);
@@ -582,8 +582,8 @@ void printBinOut(uint8_t base) {
 void printDecOut(uint8_t base) {
     clearArray(outbuffer);
 
-    //ultoa(intVal2(base), outbuffer, 10);             //reminder: itoa returns negative two's complement
-    sprintf(outbuffer, "%lu", intVal2(base));          //maybe use sprintf for decimals
+    //ultoa(intVal(base), outbuffer, 10);             //reminder: itoa returns negative two's complement
+    sprintf(outbuffer, "%lu", intVal(base));          //maybe use sprintf for decimals
 
     lcd_gotoxy(0,0);
     lcd_puts("        ");
@@ -593,7 +593,7 @@ void printDecOut(uint8_t base) {
 }
 void printHexOut(uint8_t base) {
     clearArray(outbuffer);
-    ultoa(intVal2(base), outbuffer, 16);
+    ultoa(intVal(base), outbuffer, 16);
 
     lcd_gotoxy(8, 0);
     lcd_puts("0x      ");
@@ -607,7 +607,7 @@ void printHexOut(uint8_t base) {
 void printOutput(void) {
     if(layer == DEC)
     {
-        printBinOut(10);    //THIS WAS THE CULPRIT
+        printBinOut(10);    //weird display overflow/ input wipe: THIS WAS THE CULPRIT
         printHexOut(10);
     }
 
