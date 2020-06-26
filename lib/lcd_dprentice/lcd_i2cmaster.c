@@ -157,10 +157,10 @@ void lcd_data(uint8_t data)
 
 // initialize the LCD controller
 // return: 1 if init unsuccessful, 0 if init successful
-int lcd_init(uint8_t dispAttr)
+unsigned char lcd_init(uint8_t dispAttr)
 {
     I2C_INIT();
-    uint8_t ret = 0;
+    unsigned char ret = 0;
 
 
     //check for I2C_start() timeout (returns 1 if init failed)

@@ -194,7 +194,7 @@
                     \b LCD_DISP_ON_CURSOR_BLINK display on, cursor on flashing             
  @return   0 if init successful, 1 if init unsucc   //normally none
 */
-extern int lcd_init(uint8_t dispAttr);    //normally void
+extern unsigned char lcd_init(uint8_t dispAttr);    //normally void
 
 
 /**
