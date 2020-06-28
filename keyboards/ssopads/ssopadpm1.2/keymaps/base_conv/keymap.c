@@ -131,7 +131,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     xb,      xc,          xd,         KC_NO,  \
     xa,      TO(_BASE),   KC_TRNS,    KC_TRNS \
     ),
-
 };
 
 void matrix_init_user(void) {
