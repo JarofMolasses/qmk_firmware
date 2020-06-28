@@ -47,7 +47,7 @@ enum custom_keycodes{
 uint8_t inputDigits = 16;                //max number of input digits
 const uint8_t bufferMax = 16;            //maximum size of output string
 
-uint32_t inArray[16];                    //user input array
+uint8_t inArray[16];                    //user input array
 char outbuffer[16];                      //output string buffer
 
 uint8_t pos = 0;                         //array index
