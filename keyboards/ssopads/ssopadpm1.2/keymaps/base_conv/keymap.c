@@ -14,12 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-
 /*
 keymap for doing cool base conversions on the 16x2 LCD
 
 note:
--Strings use a lot of storage, limit those;
+-Strings use a lot of storage, limit those
 */
 
 #include "lcd.h"
@@ -36,14 +35,6 @@ note:
 //#include <avr/io.h>
 //#include <avr/interrupt.h>
 
-
-//lcd available flag
-uint8_t lcd = 0;
-//record of last layer
-uint8_t layer = 0;
-//hexadecimal shift entry flag - ie was hexshift the last layer
-uint8_t hexprevious = 0;
-
 // Defines the keycodes used by our macros in process_record_user
 enum ssopad_layers{ _BASE, _FUNC, _FUNC2, DEC, BIN, HEX, HEXSHIFT};
 
@@ -52,32 +43,36 @@ enum custom_keycodes{
     m0 = SAFE_RANGE, m1, m2, m3, m4, m5, m6, m7, m8, m9, xa, xb, xc, xd, xe, xf, del, res,
 };
 
-
-//base conversion setup variables
+//base conversion variables
 uint8_t inputDigits = 16;                //max number of input digits
-const uint8_t bufferMax = 16;
+const uint8_t bufferMax = 16;            //maximum size of output string
 
-uint32_t inArray[16];                     //user input array
+uint32_t inArray[16];                    //user input array
 char outbuffer[16];                      //output string buffer
-uint8_t pos = 0;                         //array index
 
+uint8_t pos = 0;                         //array index
 uint8_t displayX = 0;                    //display start x position for input readout
 uint8_t displayY = 0;                    //display start y position for input readout
+
+uint8_t hexprevious = 0;                 //hexadecimal shift entry indicator - ie was hexshift the last layer
+
+//misc variables
+uint8_t lcd = 0;                         //lcd available indicator
+uint8_t layer = 0;                       //current layer
 
 //base conversion and display functions
 void setDisplay(uint8_t x, uint8_t y);
 void reset(void);
 void resetInput(void);
-void clearArray(char[]);
-uint32_t intVal(uint8_t);            //works in startup test
+void clearStr(char[]);
+uint32_t intVal(uint8_t);
 
+void lcd_clearln(uint8_t);
 void printInput(void);
 void printBinOut(uint8_t);
 void printDecOut(uint8_t);
 void printHexOut(uint8_t);
 void printOutput(void);
-
-void lcd_clearln(uint8_t);
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -105,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	KC_F10,  KC_NO,   KC_NO,  KC_TRNS \
     ),
 
-    [DEC] = LAYOUT(  //conv decimal entry 
+    [DEC] = LAYOUT(  //base converter decimal entry 
     del, TO(BIN),              \
     m7,        m8,      m9,   KC_NO, \
     m4,        m5,      m6,   res,   \
@@ -113,7 +108,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     m0, TO(_BASE),   KC_NO,   KC_NO  \
     ),
 
-    [BIN] = LAYOUT(  //conv binary entry
+    [BIN] = LAYOUT(  //base converter binary entry
     del,      TO(HEX),              \
     KC_NO,      KC_NO,   KC_NO,   KC_NO, \
     KC_NO,      KC_NO,   KC_NO,     res, \
@@ -121,7 +116,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     m0,     TO(_BASE),   KC_NO,   KC_NO  \
     ),
 
-    [HEX] = LAYOUT(  //conv hex entry
+    [HEX] = LAYOUT(  //base converter hex entry
     del,  TO(DEC),                  \
     m7,        m8,      m9,        KC_NO, \
     m4,        m5,      m6,          res, \
@@ -129,7 +124,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     m0, TO(_BASE),   KC_NO,  MO(HEXSHIFT) \
     ),
 
-    [HEXSHIFT] = LAYOUT(  //conv hex, a-f
+    [HEXSHIFT] = LAYOUT(  //base converter hex, a-f
     del,     KC_TRNS,                  \
     KC_NO,   KC_NO,       KC_NO,      KC_NO,  \
     xe,      xf,          KC_NO,      KC_NO,  \
@@ -140,15 +135,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 void matrix_init_user(void) {
-    if(lcd_init(LCD_DISP_ON_CURSOR) == 0)      //init and check for lcd
-    {
-        lcd = 1;                     //raise lcd flag if init successful
+    if(lcd_init(LCD_DISP_ON_CURSOR) == 0) {     //init and check for lcd
+        lcd = 1;                                //update lcd variable if init successful
 
         lcd_clrscr();
         lcd_puts("PRO MICRO v1.2");
         lcd_gotoxy(3, 1);
         lcd_puts("& knuckles");
-
 
         //pos = 7;
         //lcd_clrscr();
@@ -157,7 +150,6 @@ void matrix_init_user(void) {
         //lcd_gotoxy(9, 0);
         //ultoa(intVal(10), outbuffer, 16);
         //lcd_puts(outbuffer);
-
     }
 }
 
@@ -177,7 +169,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             writePinLow(B0);
             writePinHigh(D5);
 
-            if(lcd){
+            if(lcd) {
                 hexprevious = 0;
                 lcd_clrscr();
                 lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM");
@@ -256,7 +248,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             writePinHigh(B0);
             writePinHigh(D5);
 
-            if(lcd){
+            if(lcd) {
                 lcd_clrscr();
                 lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE");
             }
@@ -265,6 +257,7 @@ uint32_t layer_state_set_user(uint32_t state) {
     return state;
 }
 
+/*massive memory usage*/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
     case m0:
@@ -468,23 +461,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         break;
     }
-
     return true;
 }
 
-//compute value of input array in int 
-uint32_t intVal(uint8_t base)
-{
+/*Return current int value of input array*/
+uint32_t intVal(uint8_t base) {
     uint32_t val = 0;
-
     uint32_t multiplier = 1;
 
-    for (int i = pos - 1; i >= 0; i--)
-    {
+    for (int i = pos - 1; i >= 0; i--) {
         val += multiplier * inArray[i];
         multiplier *= base;
     }
-
     return val;
 }
 
@@ -492,74 +480,64 @@ void setDisplay(uint8_t x, uint8_t y) {
     displayX = x; displayY = y;
 }
 
-//clears a line from left to right on the lcd
-//@params y: row to clear
-void lcd_clearln(uint8_t y) {
+/*Clear a line at row y*/
+void lcd_clearln(uint8_t y)
+{
     lcd_gotoxy(0,y);
     lcd_puts("                ");
 }
 
-//set input to zero, reset index to 0
+/*Reset input array and index*/
 void resetInput(void) {
-    for (uint8_t i = 0; i < 16; ++i)
-    {
+    for (uint8_t i = 0; i < 16; ++i) {
         inArray[i] = 0;
     }
     pos = 0;
 }
 
-//clear character array; fill with string terminators
-void clearArray(char arr[]) {
-    for (uint8_t i = 0; i < bufferMax; ++i)
-    {
+/*Clear a character array; fill with string terminators*/
+void clearStr(char arr[]) {
+    for (uint8_t i = 0; i < bufferMax; ++i) {
         arr[i] = '\0';
     }
 }
 
-
-//clear everything and print current state of input array to LCD to displayX, displayY
+/*Print input array to LCD, behaviour depends on active layer*/
 void printInput(void) {
-
     lcd_clrscr();                           //just bloody erase the whole thing
-    if (layer == DEC)                       //rewrite the previous legend
-    {
+    if (layer == DEC) {                       //rewrite the previous legend
         //lcd_puts("d");
     }
     else if (layer == BIN) {
         lcd_gotoxy(0, 1);
         lcd_puts("0b");
-
     }
-    else if(layer == HEX ||layer == HEXSHIFT)
-    { 
+    else if(layer == HEX ||layer == HEXSHIFT) { 
         lcd_gotoxy(8, 0);
         lcd_puts("0x");
-
     }
     for (uint8_t i = 0; i < pos; ++i) {
         lcd_gotoxy(i+displayX, displayY);
 
         if (inArray[i] >= 10) {
             lcd_putc(inArray[i] + 87);       //print as hex
-        }
-        else {
+        } else {
             lcd_putc(inArray[i] + 48);       //print as dec or bin
         }
     }
-
     //lcd_gotoxy(displayX + pos, displayY);
 }
 
-//reset all
+/*Reset input to zero and clear the field*/
 void reset(void) {
     resetInput();
     printInput();
     lcd_gotoxy(displayX, displayY);
 }
 
-//for 16 char displays
+/*"Low level" printing function*/
 void printBinOut(uint8_t base) {
-    clearArray(outbuffer);
+    clearStr(outbuffer);
     uint32_t val = intVal(base);
 
     lcd_clearln(1);
@@ -569,8 +547,7 @@ void printBinOut(uint8_t base) {
     /*
     display overflow prevention because it seems like the display doesn't overflow very gracefully
     */
-    if(val <= 0x3fff)    //i like the 0b prefix for clarity, so the maximum binary width is 14-bit on the 16x2 LCD
-    {
+    if(val <= 0x3fff) {                   //i like the 0b prefix for clarity, so the maximum binary width is 14-bit on the 16x2 LCD                   
         ultoa(val, outbuffer, 2);
         lcd_gotoxy(2, 1);
         lcd_puts(outbuffer);
@@ -578,50 +555,37 @@ void printBinOut(uint8_t base) {
 
 }
 void printDecOut(uint8_t base) {
-    clearArray(outbuffer);
-
+    clearStr(outbuffer);
     ultoa(intVal(base), outbuffer, 10);           //use ultoa() for unsigned 32bit ints
 
     lcd_gotoxy(0,0);
     lcd_puts("        ");
-
     lcd_gotoxy(0, 0);
     lcd_puts(outbuffer);
 }
 void printHexOut(uint8_t base) {
-    clearArray(outbuffer);
+    clearStr(outbuffer);
     ultoa(intVal(base), outbuffer, 16);
 
     lcd_gotoxy(8, 0);
     lcd_puts("0x      ");
-
     lcd_gotoxy(10, 0);
     lcd_puts(outbuffer);
 }
 
-
-//translate stored int value into outputs, prints output to lcd
+/*Print outputs to LCD - behaviour depends on active layer*/
 void printOutput(void) {
-    if(layer == DEC)
-    {
+    if(layer == DEC) {
         printBinOut(10);    //weird display overflow/ input wipe: THIS WAS THE CULPRIT
         printHexOut(10);
     }
-
-    else if (layer == BIN)
-    {
+    else if (layer == BIN) {
         printDecOut(2);
         printHexOut(2);
     }
-
-    else if (layer == HEX || layer  == HEXSHIFT)
-    {
+    else if (layer == HEX || layer  == HEXSHIFT) {
         printBinOut(16);
         printDecOut(16);
     }
-    
     lcd_gotoxy(displayX, displayY);     //return cursor to input field 
 }
-
-
-
