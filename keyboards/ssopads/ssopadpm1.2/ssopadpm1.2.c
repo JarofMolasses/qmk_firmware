@@ -40,17 +40,12 @@ void led_set_kb(uint8_t usb_led) {}
 
 
 void matrix_init_kb(void) {
-  // runs once when the firmware starts up
-    //i2c_init();
-    //lcd_init(LCD_DISP_ON_CURSOR_BLINK);
-    //lcd_puts("and so on");
-
-  setPinOutput(B0);
-  setPinOutput(D5);
-  writePinHigh(B0);
-  writePinHigh(D5);
-  matrix_init_user();
-  
+    //set LED outputs and initialize to OFF (active low)
+    setPinOutput(B0);
+    setPinOutput(D5);
+    writePinHigh(B0);
+    writePinHigh(D5);
+    matrix_init_user();
 }
 
 

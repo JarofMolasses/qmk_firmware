@@ -95,3 +95,5 @@ keyboards/ssopads/ssopadpm1.2/keymaps/base_conv2004/.vs/base_conv2004/v15/Browse
 keyboards/ssopads/ssopadpm1.2/keymaps/base_conv2004/.vs/base_conv2004/v15/.suo
 keyboards/ssopads/ssopadpm1.2/keymaps/base_conv2004/.vs/slnx.sqlite
 keyboards/ssopads/ssopadpm1.2/keymaps/base_conv/.vs/base_conv/v15/.suo
+*.ipch
+*.sqlite-journal
