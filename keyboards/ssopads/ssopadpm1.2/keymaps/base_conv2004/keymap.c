@@ -14,158 +14,142 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
+ /*
+ keymap for doing cool base conversions on the 20x4 LCD
 
-//keymap for doing cool base conversions on the LCD
-//this is for 20x4 LCDs
+ note:
+ -Strings use a lot of storage, limit those
+ */
 
 #include "lcd.h"
 #include "i2cmaster.h" //fleury i2c
-//#include "i2c_master.h"  //qmk i2c
 
 #include <stdbool.h>
-//#include <avr/io.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
+
 #include <avr/pgmspace.h>
-//#include <avr/interrupt.h>
 #include <util/delay.h>
 #include <string.h>
+ //#include <avr/io.h>
+ //#include <avr/interrupt.h>
 
-//lcd available flag
-uint8_t lcd = 0;
-
-//hexadecimal shift entry flag
-uint8_t hexprevious = 0;
-
-// Defines the keycodes used by our macros in process_record_user
-enum ssopad_layers{ _BASE, _FUNC, _FUNC2, DEC, BIN, HEX, HEXSHIFT};
+ // Defines the keycodes used by our macros in process_record_user
+enum ssopad_layers { _BASE, _FUNC, _FUNC2, DEC, BIN, HEX, HEXSHIFT };
 
 // Defines the macros for base conversion inputs
 enum custom_keycodes {
-    m0 = SAFE_RANGE,
-    m1,
-    m2,
-    m3,
-    m4,
-    m5,
-    m6,
-    m7,
-    m8,
-    m9,
-    xa,
-    xb,
-    xc,
-    xd,
-    xe,
-    xf,
-    del,
-    d_ent,
-    b_ent,
-    x_ent,
-    res,
+    m0 = SAFE_RANGE, m1, m2, m3, m4, m5, m6, m7, m8, m9, xa, xb, xc, xd, xe, xf, del, res,
 };
 
+//base conversion variables
+uint8_t inputDigits = 16;                //max number of input digits
+const uint8_t bufferMax = 16;            //maximum size of output string
 
-//record of last layer
-uint8_t lastLayer = 0;
+uint8_t inArray[16];                    //user input array
+char outbuffer[20];                      //output string buffer
 
-//base conversion setup variables
-uint8_t inputMax = 10;
-const uint8_t bufferMax = 16;
+uint8_t pos = 0;                         //array index
+uint8_t displayX = 0;                    //display start x position for input readout
+uint8_t displayY = 0;                    //display start y position for input readout
 
-int inArray[10];                            //user input array
-char outbuffer[16];                         //output string buffer
-unsigned int val;                                    //interpret the value of the input array in int  
-uint8_t pos = 0;                            //array index
+uint8_t hexprevious = 0;                 //hexadecimal shift entry indicator - ie was hexshift the last layer
 
-uint8_t displayX = 0;               //display start x position for input readout
-uint8_t displayY = 0;               //display start y position for input readout
+//misc variables
+uint8_t lcd = 0;                         //lcd available indicator
+uint8_t layer = 0;                       //current layer
 
-
-//base conversion functions
-void setDisplay(unsigned char x, unsigned char y);
+//base conversion and display functions
+void setDisplay(uint8_t x, uint8_t y);
 void reset(void);
 void resetInput(void);
-void clearArray(char arr[]);
-void intVal(uint8_t base);
+void clearStr(char[]);
+uint32_t intVal(uint8_t);
 
+void lcd_clearln(uint8_t);
 void printInput(void);
-void printBinOut(void);
-void printDecOut(void);
-void printHexOut(void);
-void printOutput(uint8_t base);
+void printBinOut(uint8_t);
+void printDecOut(uint8_t);
+void printHexOut(uint8_t);
+void printOutput(void);
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_BASE] = LAYOUT( 
-	KC_BSPC, KC_GRV,                      \
+    [_BASE] = LAYOUT(
+    KC_BSPC, KC_GRV,                      \
     KC_HOME, KC_UP,   KC_PGUP,   KC_VOLU, \
     KC_LEFT, KC_DOWN, KC_RIGHT,  KC_VOLD, \
-	KC_END,  KC_NO,   KC_PGDN,   KC_LGUI,  \
-	KC_INS,   TG(1),   KC_DEL,    MO(2)  \
+    KC_END,  KC_NO,   KC_PGDN,   KC_LGUI,  \
+    KC_INS,   TG(1),   KC_DEL,    MO(2)  \
     ),
 
-    [_FUNC] = LAYOUT( 
-	KC_BSPC, KC_PSLS,               \
+    [_FUNC] = LAYOUT(
+    KC_BSPC, KC_PSLS,               \
     KC_7,  KC_8,   KC_9,   KC_PAST, \
     KC_4,  KC_5,   KC_6,   KC_PMNS, \
-	KC_1,  KC_2,   KC_3,   KC_PPLS, \
-	KC_0,  KC_TRNS, KC_PDOT, LT(2, KC_PENT) \
+    KC_1,  KC_2,   KC_3,   KC_PPLS, \
+    KC_0,  KC_TRNS, KC_PDOT, LT(2, KC_PENT) \
     ),
-   
-    [_FUNC2] = LAYOUT( 
-	BL_TOGG, TO(DEC),                  \
+
+    [_FUNC2] = LAYOUT(
+    BL_TOGG, TO(DEC),                  \
     KC_F7,  KC_F8,   KC_F9,   BL_INC,  \
     KC_F4,  KC_F5,   KC_F6,   BL_DEC,  \
-	KC_F1,  KC_F2,   KC_F3,   KC_CAPS, \
-	KC_F10,  KC_NO,   KC_NO,  KC_TRNS \
+    KC_F1,  KC_F2,   KC_F3,   KC_CAPS, \
+    KC_F10,  KC_NO,   KC_NO,  KC_TRNS \
     ),
 
-    [DEC] = LAYOUT(  //conv decimal entry 
-    del, TO(BIN),                  \
-    m7,  m8,   m9,   KC_NO,  \
-    m4,  m5,   m6,   d_ent,  \
-    m1,  m2,   m3,   KC_NO, \
-    m0, TO(_BASE),   res, KC_NO  \
+    [DEC] = LAYOUT(  //base converter decimal entry 
+    del, TO(BIN),              \
+    m7,        m8,      m9,   KC_NO, \
+    m4,        m5,      m6,   res,   \
+    m1,        m2,      m3,   KC_NO, \
+    m0, TO(_BASE),   KC_NO,   KC_NO  \
     ),
 
-    [BIN] = LAYOUT(  //conv binary entry
-    del,   TO(HEX),                  \
-    KC_NO,  KC_NO,      KC_NO,   KC_NO,  \
-    KC_NO,  KC_NO,      KC_NO,   b_ent,  \
-    m1,      KC_NO,      KC_NO,   KC_NO, \
-    m0,     TO(_BASE),   res,   KC_NO \
+    [BIN] = LAYOUT(  //base converter binary entry
+    del,      TO(HEX),              \
+    KC_NO,      KC_NO,   KC_NO,   KC_NO, \
+    KC_NO,      KC_NO,   KC_NO,     res, \
+    m1,         KC_NO,   KC_NO,   KC_NO, \
+    m0,     TO(_BASE),   KC_NO,   KC_NO  \
     ),
 
-    [HEX] = LAYOUT(  //conv hex entry
-    del, TO(DEC),                  \
-    m7,  m8,   m9,   KC_NO,  \
-    m4,  m5,   m6,   x_ent,  \
-    m1,  m2,   m3,   KC_NO, \
-    m0, TO(_BASE),   res,  MO(HEXSHIFT) \
+    [HEX] = LAYOUT(  //base converter hex entry
+    del,  TO(DEC),                  \
+    m7,        m8,      m9,        KC_NO, \
+    m4,        m5,      m6,          res, \
+    m1,        m2,      m3,        KC_NO, \
+    m0, TO(_BASE),   KC_NO,  MO(HEXSHIFT) \
     ),
 
-    [HEXSHIFT] = LAYOUT(  //conv hex, a-f
-    del,   KC_TRNS,                  \
-    KC_NO,   KC_NO,      KC_NO,    KC_NO,  \
-    xe,      xf,         KC_NO,    KC_NO,  \
-    xb,      xc,          xd,      KC_NO,  \
-    xa,     TO(_BASE),   KC_TRNS,    KC_TRNS \
+    [HEXSHIFT] = LAYOUT(  //base converter hex, a-f
+    del,     KC_TRNS,                  \
+    KC_NO,   KC_NO,       KC_NO,      KC_NO,  \
+    xe,      xf,          KC_NO,      KC_NO,  \
+    xb,      xc,          xd,         KC_NO,  \
+    xa,      TO(_BASE),   KC_TRNS,    KC_TRNS \
     ),
-
 };
 
 void matrix_init_user(void) {
-
-    if(lcd_init(LCD_DISP_ON_CURSOR) == 0)      //init and check for lcd
-    {
-        lcd = 1;                     //raise lcd flag if init successful
+    if (lcd_init(LCD_DISP_ON_CURSOR) == 0) {     //init and check for lcd
+        lcd = 1;                                //update lcd variable if init successful
 
         lcd_clrscr();
         lcd_puts("PRO MICRO v1.2");
+        lcd_gotoxy(3, 1);
+        lcd_puts("& knuckles");
+
+        //pos = 7;
+        //lcd_clrscr();
+        //lcd_puts("TEST HEX:");
+
+        //lcd_gotoxy(9, 0);
+        //ultoa(intVal(10), outbuffer, 16);
+        //lcd_puts(outbuffer);
     }
-   
 }
 
 /*
@@ -177,144 +161,133 @@ void led_set_user(uint8_t usb_led) {
 }
 */
 
-
 uint32_t layer_state_set_user(uint32_t state) {
     switch (biton32(state)) {
-        case _FUNC:
-            lastLayer = 1;
-           
-            writePinLow(B0);
-            writePinHigh(D5);
+    case _FUNC:
+        layer = 1;
+        writePinLow(B0);
+        writePinHigh(D5);
 
-            if(lcd){
-                hexprevious = 0;
-                lcd_home(); lcd_puts("                ");
-                lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM     ");
-            }
-
-            break;
-
-        case _FUNC2:
-            lastLayer = 2;
-            writePinHigh(B0);
-            writePinLow(D5);
-
-            if (lcd) {
-                hexprevious = 0;
-                lcd_home(); lcd_puts("SHIFT          ");
-            }
-            break;
-            
-        case DEC:
-            lastLayer = 3;
-            if (lcd) {
-                resetInput();
-                setDisplay(2, 0);
-                hexprevious = 0;
-                inputMax = 5;
-               
-                clearArray(outbuffer);
-
-                lcd_clrscr();
-                lcd_puts("d             ");
-                lcd_gotoxy(0, 1);
-                lcd_puts("DECIMAL INPUT  ");
-                lcd_gotoxy(displayX, displayY);
-            }
-            break;
-
-        case BIN:
-            lastLayer = 4;
-            if (lcd) {
-                resetInput();
-                setDisplay(2, 1);
-                hexprevious = 0;
-                inputMax = 14;
-               
-                clearArray(outbuffer);
-
-                lcd_clrscr();
-                lcd_puts("BINARY INPUT   ");
-                lcd_gotoxy(0, 1);
-                lcd_puts("0b             ");
-                lcd_gotoxy(displayX, displayY);
-            }
-            break;
-
-        case HEX:
-            lastLayer = 5;
-            if (lcd) {
-                
-                setDisplay(11, 0);
-                clearArray(outbuffer);
-                inputMax = 4;
-
-                if (!hexprevious) {
-                    resetInput();
-
-                    lcd_clrscr();
-                    lcd_gotoxy(9, 0);
-                    lcd_puts("0x            ");
-                    lcd_gotoxy(0, 1);
-                    lcd_puts("HEX INPUT      ");
-                    lcd_gotoxy(displayX, displayY);
-                }
-            }
-            break;
-
-        case HEXSHIFT:
-            hexprevious = 1;
-
-            break;
-
-        default:
-            lastLayer = 0;
-            writePinHigh(B0);
-            writePinHigh(D5);
-
-            if(lcd){
-                lcd_home(); lcd_puts("                ");
-                lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE    ");
-            }
-            break;
+        if (lcd) {
+            hexprevious = 0;
+            lcd_clrscr();
+            lcd_gotoxy(0, 1); lcd_puts("LAYER: NUM");
         }
+        break;
+
+    case _FUNC2:
+        layer = 2;
+        writePinHigh(B0);
+        writePinLow(D5);
+
+        if (lcd) {
+            hexprevious = 0;
+            lcd_clearln(0); lcd_home(); lcd_puts("SHIFT");
+        }
+        break;
+
+    case DEC:
+        layer = 3;
+        if (lcd) {
+            hexprevious = 0;
+            inputDigits = 8;
+            setDisplay(0, 1);
+
+            resetInput();
+
+            lcd_clrscr();
+            lcd_puts("DECIMAL INPUT");
+            lcd_gotoxy(displayX, displayY);
+        }
+        break;
+
+    case BIN:
+        layer = 4;
+        if (lcd) {
+            hexprevious = 0;
+            inputDigits = 16;
+            setDisplay(2, 2);
+
+            resetInput();
+
+            lcd_clrscr();
+            lcd_puts("BINARY INPUT");
+            lcd_gotoxy(0, 2);
+            lcd_puts("0b");
+            lcd_gotoxy(displayX, displayY);
+        }
+        break;
+
+    case HEX:
+        layer = 5;
+        if (lcd) {
+            if (!hexprevious) {             //only reset if the last layer was not hexshift
+                inputDigits = 6;
+                setDisplay(2, 3);
+
+                resetInput();
+
+                lcd_clrscr();
+                lcd_puts("HEX INPUT");
+                lcd_gotoxy(0, 3);
+                lcd_puts("0x");
+                lcd_gotoxy(displayX, displayY);
+            }
+        }
+        break;
+
+    case HEXSHIFT:
+        hexprevious = 1;
+        break;
+
+    default:
+        layer = 0;
+        writePinHigh(B0);
+        writePinHigh(D5);
+
+        if (lcd) {
+            lcd_clrscr();
+            lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE");
+        }
+        break;
+    }
     return state;
 }
 
-
+/*massive memory usage*/
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
     case m0:
         if (record->event.pressed) {
-            if (pos < inputMax)
+            if (pos < inputDigits)
             {
                 inArray[pos] = 0;
                 pos++;
 
-                printInput();
-            }    
+                printInput(); printOutput();
+            }
         }
         break;
 
     case m1:
         if (record->event.pressed) {
-            if (pos < inputMax)
+            if (pos < inputDigits)
             {
                 inArray[pos] = 1;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case m2:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 2;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
@@ -322,55 +295,55 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m3:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 3;
                 pos++;
 
-                printInput();
-            }     
+                printInput(); printOutput();
+            }
         }
         break;
 
     case m4:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 4;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case m5:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 5;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case m6:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 6;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case m7:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 7;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
 
         }
@@ -378,88 +351,88 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     case m8:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 8;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case m9:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 9;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xa:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xa;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xb:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xb;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xc:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xc;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xd:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xd;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xe:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xe;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
 
     case xf:
         if (record->event.pressed) {
-            if (pos < inputMax) {
+            if (pos < inputDigits) {
                 inArray[pos] = 0xf;
                 pos++;
 
-                printInput();
+                printInput(); printOutput();
             }
         }
         break;
@@ -470,131 +443,77 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 pos--;
 
                 inArray[pos] = 0;
-                lcd_gotoxy(pos+displayX, displayY);
+                lcd_gotoxy(pos + displayX, displayY);
                 lcd_putc(' ');
+
+                printOutput();
             }
-        }
-        break;
-
-    case d_ent:
-        if (record->event.pressed) {
-            intVal(10);
-            resetInput();
-            printOutput(10);
-        }
-        break;
-
-    case b_ent:
-        if (record->event.pressed) {
-            intVal(2); 
-            resetInput();
-            printOutput(2);
-        }
-        break;
-
-    case x_ent:
-        if (record->event.pressed) {
-            intVal(16); 
-            resetInput();
-            printOutput(16);
         }
         break;
 
     case res:
         if (record->event.pressed) {
-
-            /*resetInput();
-            printInput();
-            lcd_gotoxy(displayX, displayY);*/
             reset();
         }
+        break;
     }
     return true;
 }
 
+/*Return current int value of input array*/
+uint32_t intVal(uint8_t base) {
+    uint32_t val = 0;
+    uint32_t multiplier = 1;
 
-void setDisplay(unsigned char x, unsigned char y) {
+    for (int i = pos - 1; i >= 0; i--) {
+        val += multiplier * inArray[i];
+        multiplier *= base;
+    }
+    return val;
+}
+
+void setDisplay(uint8_t x, uint8_t y) {
     displayX = x; displayY = y;
 }
 
-//clears a line from left to right on the lcd
-//@params x,y: coordinates of erase start
-void clearln(uint8_t x, uint8_t y) {
-    lcd_gotoxy(x,y);
+/*Clear a line at row y*/
+void lcd_clearln(uint8_t y)
+{
+    lcd_gotoxy(0, y);
     lcd_puts("                ");
 }
 
-//set input to zero, reset index to 0
+/*Reset input array and index*/
 void resetInput(void) {
-    for (int i = 0; i < inputMax; i++)
-    {
+    for (uint8_t i = 0; i < 16; ++i) {
         inArray[i] = 0;
     }
-
     pos = 0;
 }
 
-//clear character array; fill with string terminators
-void clearArray(char arr[]) {
-    for (int i = 0; i < bufferMax; i++)
-    {
+/*Clear a character array; fill with string terminators*/
+void clearStr(char arr[]) {
+    for (uint8_t i = 0; i < bufferMax; ++i) {
         arr[i] = '\0';
     }
 }
 
-//compute current int value of input array
-//@param base: base of input number system
-void intVal(uint8_t base) {
-    val = 0;
-
-    unsigned int multiplier = 1;      
-    int i = pos-1;        //start at LSB, exponent 0
-
-    while(i >= 0)        //run through each digit
-    {
-        val += inArray[i] * multiplier;
-        multiplier *= base;
-        i--;
-    }
-}
-
-//clear everything and print current state of input array to LCD to displayX, displayY
+/*Print input array to LCD, behaviour depends on active layer*/
 void printInput(void) {
-
-    //unsigned char oppositeRow;  //on a 2 line display (y = 1 or 0), the opposite row is just !y
-    //oppositeRow = !displayY;
-
-    //lcd_gotoxy(displayX, displayY);         //erase input line to the right of label
-    //lcd_puts("               ");
-    //int i;
-
-    //for (i = displayX - 3; i >= 0; i--) {   //erase input line to left (goofy)
-    //    lcd_gotoxy(i, displayY);
-    //    lcd_puts(" ");
-    //}
-    //clearln(0, !displayY);                  //erase entire opposite line 
-
-
     lcd_clrscr();                           //just bloody erase the whole thing
-    if (lastLayer == DEC)                   //rewrite the previous legend
-    {
-        lcd_puts("d");
-
+    if (layer == DEC) {                       //rewrite the previous legend
+        //lcd_puts("d");
     }
-    else if (lastLayer == BIN) {
+    else if (layer == BIN) {
         lcd_gotoxy(0, 1);
         lcd_puts("0b");
-
     }
-    else if(lastLayer == HEX ||lastLayer == HEXSHIFT)
-    { 
-        lcd_gotoxy(9, 0);
+    else if (layer == HEX || layer == HEXSHIFT) {
+        lcd_gotoxy(8, 0);
         lcd_puts("0x");
-
     }
-
-    for (int i = 0; i < pos; i++) {
-        lcd_gotoxy(i+displayX, displayY);
+    for (uint8_t i = 0; i < pos; ++i) {
+        lcd_gotoxy(i + displayX, displayY);
 
         if (inArray[i] >= 10) {
             lcd_putc(inArray[i] + 87);       //print as hex
@@ -603,69 +522,67 @@ void printInput(void) {
             lcd_putc(inArray[i] + 48);       //print as dec or bin
         }
     }
+    //lcd_gotoxy(displayX + pos, displayY);
 }
 
-//reset all
+/*Reset input to zero and clear the field*/
 void reset(void) {
     resetInput();
     printInput();
     lcd_gotoxy(displayX, displayY);
 }
 
-//for 16 char displays, binary always prints to the second line, dec to first line, etc
-void printBinOut(void) {
-    clearArray(outbuffer);
-    itoa(val, outbuffer, 2);
+/*"Low level" printing function*/
+void printBinOut(uint8_t base) {
+    clearStr(outbuffer);
+    uint32_t val = intVal(base);
+
+    lcd_clearln(1);
     lcd_gotoxy(0, 1);
-    lcd_puts("0b              ");
-    lcd_gotoxy(2, 1);
-    lcd_puts(outbuffer);
-}
-void printDecOut(void) {
-    clearArray(outbuffer);
+    lcd_puts("0b");
 
-    //itoa(val, outbuffer, 10);             //reminder: itoa returns negative two's complement
-    sprintf(outbuffer, "%u", val);          //maybe use sprintf for decimals
-
-    lcd_home();
-    lcd_puts("d      ");
-    lcd_gotoxy(2, 0);
-    lcd_puts(outbuffer);
-}
-void printHexOut(void) {
-    clearArray(outbuffer);
-    itoa(val, outbuffer, 16);
-    lcd_gotoxy(9, 0);
-    lcd_puts("0x         ");
-    lcd_gotoxy(11, 0);
-    lcd_puts(outbuffer);
-}
-
-//translate stored int value into outputs, prints output to lcd
-//@param base: base of current layer number system
-//assumes val is calculated 
-void printOutput(uint8_t base) {
-
-    if(base == 10)
-    {
-        printBinOut();
-
-        printHexOut();
+    /*
+    display overflow prevention because it seems like the display doesn't overflow very gracefully
+    */
+    if (val <= 0x3fff) {                   //i like the 0b prefix for clarity, so the maximum binary width is 14-bit on the 16x2 LCD                   
+        ultoa(val, outbuffer, 2);
+        lcd_gotoxy(2, 1);
+        lcd_puts(outbuffer);
     }
 
-    else if (base == 2)
-    {
-        printDecOut();
+}
+void printDecOut(uint8_t base) {
+    clearStr(outbuffer);
+    ultoa(intVal(base), outbuffer, 10);           //use ultoa() for unsigned 32bit ints
 
-        printHexOut();
+    lcd_gotoxy(0, 0);
+    lcd_puts("        ");
+    lcd_gotoxy(0, 0);
+    lcd_puts(outbuffer);
+}
+void printHexOut(uint8_t base) {
+    clearStr(outbuffer);
+    ultoa(intVal(base), outbuffer, 16);
+
+    lcd_gotoxy(8, 0);
+    lcd_puts("0x      ");
+    lcd_gotoxy(10, 0);
+    lcd_puts(outbuffer);
+}
+
+/*Print outputs to LCD - behaviour depends on active layer*/
+void printOutput(void) {
+    if (layer == DEC) {
+        printBinOut(10);    //weird display overflow/ input wipe: THIS WAS THE CULPRIT
+        printHexOut(10);
     }
-
-    else if (base == 16)
-    {
-        printBinOut();
-
-        printDecOut();
+    else if (layer == BIN) {
+        printDecOut(2);
+        printHexOut(2);
     }
-
-    lcd_gotoxy(displayX, displayY);
+    else if (layer == HEX || layer == HEXSHIFT) {
+        printBinOut(16);
+        printDecOut(16);
+    }
+    lcd_gotoxy(displayX, displayY);     //return cursor to input field 
 }
