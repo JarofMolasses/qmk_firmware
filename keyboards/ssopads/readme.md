@@ -1,4 +1,4 @@
-# SSOpad, weird 18-key macro pad prototype
+# SSOpad, 18-key macro pad prototype
 
 ### neat pictures
 V1.2 Teensy, with underglow 
