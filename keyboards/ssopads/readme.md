@@ -40,7 +40,7 @@ SRC += lcd_i2cmaster.c \
        twimaster.c \
 ```
 ### Changes to [keymap]/config.h
-You can override the I2C address define and the display dimensions in config.h (if necessary):
+You can override the I2C address define and the display dimensions in config.h (if necessary) - for example: \
 ```
 #define PCF8574A 0x3F      //set address to 0x3F, default is 0x27
 #define LCD_LINE_LENGTH 20 //set line length to 20, default is 16
