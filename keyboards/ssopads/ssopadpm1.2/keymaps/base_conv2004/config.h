@@ -22,6 +22,7 @@
 /* address override*/
 #define PCF8574A 0x27
 
-// lcd dimensions override
+/* lcd dimensions override */
+#define LCD_DISP_LENGTH    20
 #define LCD_LINES 4
-#define LCD_LINE_LENGTH 20
+

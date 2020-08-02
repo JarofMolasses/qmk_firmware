@@ -79,11 +79,33 @@ static char wr_lcd_mode(unsigned char c, unsigned char mode)
 //}
 
 //copy but match definition in lcd.h
+//added fleury memory mapping, this fixes some odd behaviour on 4 line LCDs
 void lcd_gotoxy(uint8_t x, uint8_t y)
 {
-    wr_lcd_mode(0x80 | (_base_y[y] | x), 0);
+   //oregano
+   /* wr_lcd_mode(0x80 | (_base_y[y] | x), 0);
     _lcd_x = x;
-    _lcd_y = y;
+    _lcd_y = y;*/
+
+    #if LCD_LINES==1
+        lcd_command((1 << LCD_DDRAM) + LCD_START_LINE1 + x);
+    #endif
+    #if LCD_LINES==2
+        if (y == 0)
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE1 + x);
+        else
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE2 + x);
+    #endif
+    #if LCD_LINES==4
+        if (y == 0)
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE1 + x);
+        else if (y == 1)
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE2 + x);
+        else if (y == 2)
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE3 + x);
+        else /* y==3 */
+            lcd_command((1 << LCD_DDRAM) + LCD_START_LINE4 + x);
+    #endif
 }
 
 
@@ -110,7 +132,7 @@ void lcd_putc(char c)
         lcd_gotoxy(0,++_lcd_y);
     }
     if (c != '\n') {
-        ++_lcd_x;
+        //++_lcd_x;
         wr_lcd_mode(c, 1);
     }
 }

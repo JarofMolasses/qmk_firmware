@@ -53,8 +53,9 @@
  * @name  Definition for LCD controller type
  * Use 0 for HD44780 controller, change to 1 for displays with KS0073 controller.
  */
+#ifndef LCD_CONTROLLER_KS0073
 #define LCD_CONTROLLER_KS0073 0  /**< Use 0 for HD44780 controller, 1 for KS0073 controller */
-
+#endif
 /** 
  *  @name  Definitions for Display Size 
  *  Change these definitions to adapt setting to your display
@@ -65,10 +66,13 @@
 #endif
 
 #ifndef LCD_DISP_LENGTH
-#define LCD_DISP_LENGTH    16     /**< visibles characters per line of the display */
+#define LCD_DISP_LENGTH    16   /**< visibles characters per line of the display */
 #endif
 
-#define LCD_LINE_LENGTH  0x40     /**< internal line length of the display    */
+#ifndef LCD_LINE_LENGTH 
+#define LCD_LINE_LENGTH  0x40    /**< internal line length of the display    */
+#endif
+
 #define LCD_START_LINE1  0x00     /**< DDRAM address of first char of line 1 */
 #define LCD_START_LINE2  0x40     /**< DDRAM address of first char of line 2 */
 #define LCD_START_LINE3  0x14     /**< DDRAM address of first char of line 3 */
