@@ -12,7 +12,7 @@ the PCB has the reset pins of the Pro Micro broken out for a 6x3.5mm SMD tact sw
 
 
 # Adding support for PCF8574-based I2C LCDs
-I could not find any examples of using I2C-backpacked HD44780 LCDs in QMK. This might be trivial to do with just base QMK libraries, but that kind of goes over my head 
+I could not find any examples of using I2C-backpacked HD44780 LCDs in QMK. This might be trivial to do with just base QMK libraries, but this was an easier implementatiion to start with and I didn't want to modify anything in the QMK core.
 
 ### Update QMK Core and Submodules:
 (After defining remotes)
