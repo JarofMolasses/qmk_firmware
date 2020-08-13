@@ -25,7 +25,7 @@ git submodule update --recursive --remote
 ```
 
 ### Add I2C LCD library (with some tweaks):
-see updated code: https://github.com/JarofMolasses/qmk_firmware/tree/master/lib/lcd_dprentice
+see updated code: https://github.com/JarofMolasses/qmk_firmware/tree/I2C_LCD/lib/lcd_dprentice
 
 I used these: [I2C LCD source files](https://www.avrfreaks.net/comment/2640876#comment-2640876) posted by David Prentice\
 I've since made quite a few changes to these, in order to make it work with the Teensy (port B5 was being used in the original) and to make cold-swapping LCDs possible. (with Fleury's I2C library as is, powering on the keyboard without an LCD attached would lock up the firmware.) 
