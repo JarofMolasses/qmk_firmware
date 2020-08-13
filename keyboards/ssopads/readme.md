@@ -43,7 +43,7 @@ SRC += lcd_i2cmaster.c \
 You can override the I2C address define and the display dimensions in config.h (if necessary) - for example: 
 ```
 #define PCF8574A 0x3F      //set address to 0x3F, default is 0x27
-#define LCD_LINE_LENGTH 20 //set line length to 20, default is 16
+#define LCD_DISP_LENGTH 20 //set line length to 20, default is 16
 #define LCD_LINES 4        //set number of lines to 4, default is 2
 ```
 ### Hardware
