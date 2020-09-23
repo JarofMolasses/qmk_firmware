@@ -7,9 +7,8 @@ V1.2 Teensy, with underglow
 ### Hardware
 see PCB files at: https://github.com/JarofMolasses/SSOpad
 
-### Supports both Teensy and Pro Micro/Elite-C
-the PCB has the reset pins of the Pro Micro broken out 
-
+###Supports both Teensy and Pro Micro/Elite-C
+1.21: Teensy needs a little bodge wire if you want the LED indicator to work. I recommend just using the Pro Micro, it's better.
 
 # Adding support for PCF8574-based I2C LCDs
 I could not find any examples of using I2C-backpacked HD44780 LCDs in QMK. This might be trivial to do with just base QMK libraries, but this was an easier implementatiion to start with and I didn't want to modify anything in the QMK core.
