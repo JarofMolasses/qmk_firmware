@@ -7,7 +7,7 @@ V1.2 Teensy, with underglow
 ### Hardware
 see PCB files at: https://github.com/JarofMolasses/SSOpad
 
-###Supports both Teensy and Pro Micro/Elite-C
+### Supports both Teensy and Pro Micro/Elite-C
 1.21: Teensy needs a little bodge wire if you want the LED indicator to work. I recommend just using the Pro Micro, it's better.
 
 # Adding support for PCF8574-based I2C LCDs
