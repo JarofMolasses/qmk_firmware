@@ -208,7 +208,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             resetInput();
 
             lcd_clrscr();
-            lcd_puts("DECIMAL INPUT");
+            dispBase();
             lcd_gotoxy(displayX, displayY);
         }
         break;
@@ -223,7 +223,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             resetInput();
 
             lcd_clrscr();
-            lcd_puts("BINARY INPUT");
+            dispBase();
             lcd_gotoxy(0, 2);
             lcd_puts("0b");
             lcd_gotoxy(displayX, displayY);
@@ -240,7 +240,7 @@ uint32_t layer_state_set_user(uint32_t state) {
                 resetInput();
 
                 lcd_clrscr();
-                lcd_puts("HEX INPUT");
+                dispBase();
                 lcd_gotoxy(0, 3);
                 lcd_puts("0x");
                 lcd_gotoxy(displayX, displayY);
@@ -605,12 +605,12 @@ void printOutput(void) {
 void dispBase(void) {
     lcd_home();
     if (layer == DEC) {
-        lcd_puts("DECIMAL INPUT");
+        lcd_puts("  [DECIMAL INPUT]");
     }
     else if (layer == BIN) {
-        lcd_puts("BINARY INPUT");
+        lcd_puts("   [BINARY INPUT]");
     }
     else if (layer == HEX || HEXSHIFT) {
-        lcd_puts("HEX INPUT");
+        lcd_puts("    [HEX INPUT]");
     }
 }
