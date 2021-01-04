@@ -20,6 +20,6 @@
 
 // OLED overrides
 #define OLED_DISPLAY_128X64
-#define OLED_TIMEOUT 0
+#define OLED_TIMEOUT 600000
 
 
