@@ -1,1 +1,1 @@
-# The default keymap for ssopadpm1.2
+# keymap for testing SSD1306 OLED 

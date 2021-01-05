@@ -20,7 +20,6 @@
 #define ALIAS_MAX_LENGTH 5
 #define ROW_OFFSET 3
 #define BUFFER_SIZE 6
-#define NUMBER_OF_LAYERS 3
 
 void oled_print_static_aliases(uint8_t);
 void oled_print_keymap_aliases(uint8_t);
@@ -58,6 +57,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* 2D backup array of aliases for each layer
 use these to fill out any special keycodes outside of the 0x0 - 0xFF range
+using pointers to avoid using a 4D array, i guess
 */
 const char * static_aliases[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = {
@@ -85,8 +85,7 @@ const char * static_aliases[][MATRIX_ROWS][MATRIX_COLS] = {
     }
 };
 
-
-/* smarter array of aliases in PROGMEM? it's FUCKING massive, though*/
+/* array of keycode aliases in PROGMEM? it's FUCKING massive, though*/
 #define NUMBER_OF_ALIASES 0xF0
 const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "     ",
@@ -393,8 +392,9 @@ void oled_print_static_aliases(uint8_t layer) {
     }
 }
 
-//print keycode aliases to OLED, from keymap
-//FIXME: need mechanism for handling transparent keys - scroll up layers until non-transparent key is found
+/*prints keycode aliases to OLED, dynamically from keymap
+FIXME: slow as heck. bad code
+*/
 void oled_print_keymap_aliases(uint8_t layer)
 {
     for (int row = 0; row < MATRIX_ROWS; row++) {
@@ -407,7 +407,7 @@ void oled_print_keymap_aliases(uint8_t layer)
 
             uint16_t keycode = pgm_read_word(&(keymaps[layer][row][col]));               //retrieve PROGMEM values using pgmspace commands
 
-            /* two ways to print the raw hex */
+            /* two ways to print the raw hex if desired*/
             //ultoa(keycode, buffer, 16);               
             //sprintf(buffer, "%-5x", keycode);
 
