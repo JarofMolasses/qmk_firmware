@@ -26,13 +26,14 @@
 #define OLED_FONT_H "keyboards/ssopads/lib/molassesfont.c"
 
 //at these addresses in the custom font bitmap are the funny symbols
-#define LEFT_SYMBOL 0x1b
-#define RIGHT_SYMBOL 0x1a
-#define DOWN_SYMBOL 0x19
-#define UP_SYMBOL 0x18
-#define RETURN_SYMBOL 0x80
-#define BSPC_SYMBOL1 0x81
-#define BSPC_SYMBOL2 0x82
-
+#define LEFT_INDEX 0x1b
+#define RIGHT_INDEX 0x1a
+#define DOWN_INDEX 0x19
+#define UP_INDEX 0x18
+#define RETURN_INDEX 0x80
+#define BSPC_INDEX1 0x81
+#define BSPC_INDEX2 0x82
+#define LOSS_INDEX1 0xDE
+#define LOSS_INDEX2 0xDF
 
 

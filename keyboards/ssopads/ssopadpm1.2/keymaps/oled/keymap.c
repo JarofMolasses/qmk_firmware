@@ -72,7 +72,7 @@ const char static_aliases[][MATRIX_ROWS][MATRIX_COLS][6] = {
         {"    ", "     ", "    ", "     "},
         {"    ", "     ", "    ", "     "},
         {"    ", "     ", "    ", "     "},
-        {"    ", "BASE ", "    ", {RETURN_SYMBOL, '/', 'F','N','\0'}}
+        {"    ", "BASE ", "    ", {RETURN_INDEX, '/', 'F','N','\0'}}
     },
 
     [_FUNC] = {
@@ -89,7 +89,7 @@ const char static_aliases[][MATRIX_ROWS][MATRIX_COLS][6] = {
 /* array of keycode aliases in PROGMEM. it's FUCKING massive, though
  * 
  * for funny symbols, construct the string char by char 
- * ex. for backspace, which is two chars wide, enter in the array {BSPC_SYMBOL1, BSPC_SYMBOL2, '\0'} 
+ * ex. for backspace, which is two chars wide, enter in the array {BSPC_INDEX1, BSPC_INDEX2, '\0'} 
  * throw in a string terminator, idk
 */
 #define NUMBER_OF_ALIASES 0xFF
@@ -136,7 +136,7 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "0",
     "CR",
     "ESC",
-    {BSPC_SYMBOL1, BSPC_SYMBOL2,'\0'}, //at these addresses in the font bitmap are the funny symbols
+    {BSPC_INDEX1, BSPC_INDEX2,'\0'}, //at these addresses in the font bitmap are the funny symbols
     "TAB",
     "SPC",
     "-",
@@ -173,10 +173,10 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "DEL",
     "END",
     "PGDN",
-    {RIGHT_SYMBOL, '\0'},
-    {LEFT_SYMBOL, '\0'},    //0x50
-    {DOWN_SYMBOL, '\0'},
-    {UP_SYMBOL, '\0'},
+    {RIGHT_INDEX, '\0'},
+    {LEFT_INDEX, '\0'},    //0x50
+    {DOWN_INDEX, '\0'},
+    {UP_INDEX, '\0'},
     "NUMLK",
     "/",    //Keypad versions follow
     "*",
@@ -362,7 +362,6 @@ uint32_t layer_state_set_user(uint32_t state) {
             writePinHigh(D5);
 
             oled_write_ln_P(PSTR("Layer: NUM"), false);
-            //oled_write_char(24, false);                     //testing printing arrow
             oled_print_keymap_aliases(_NUM);
 
             break;
@@ -373,7 +372,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 
             oled_write_ln_P(PSTR("Layer: FN"), false);
             oled_print_keymap_aliases(_FUNC);
-
+        
             break;
 
         case _BASE:
