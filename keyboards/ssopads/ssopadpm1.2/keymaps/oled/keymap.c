@@ -16,6 +16,7 @@
 #include QMK_KEYBOARD_H
 #include <string.h>
 #include <stdio.h>
+#include "print.h"
 
 #define ALIAS_MAX_LENGTH 5
 #define ROW_OFFSET 3
@@ -33,9 +34,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_HOME, KC_UP, KC_PGUP, KC_VOLU,    \
         KC_LEFT, KC_DOWN, KC_RIGHT, KC_VOLD, \
         KC_END, KC_NO, KC_PGDN, KC_LGUI,     \
-        KC_INS, TG(_NUM), KC_DEL, MO(_FUNC)     \
+        KC_INS, TG(_NUM), KC_DEL, MO(_FUNC)  \
      ),
-
 
     [_NUM] = LAYOUT(/* NUM */
         KC_BSPC, KC_PSLS,\
@@ -55,11 +55,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-/* 2D backup array of aliases for each layer
-use these to fill out any special keycodes outside of the 0x0 - 0xFF range
-using pointers to avoid using a 4D array, i guess
+/* 4D backup array of aliases for each layer
+use these to fill out any special keycodes outside of the 0x0 - 0xFF range, macros esp.
 */
-const char * static_aliases[][MATRIX_ROWS][MATRIX_COLS] = {
+const char static_aliases[][MATRIX_ROWS][MATRIX_COLS][6] = {
     [_BASE] = {
         {"    ", "    ", "     ", "     "},
         {"    ", "    ", "     ", "     "},
@@ -73,7 +72,7 @@ const char * static_aliases[][MATRIX_ROWS][MATRIX_COLS] = {
         {"    ", "     ", "    ", "     "},
         {"    ", "     ", "    ", "     "},
         {"    ", "     ", "    ", "     "},
-        {"    ", "BASE ", "    ", "R/FN "}
+        {"    ", "BASE ", "    ", {RETURN_SYMBOL, '/', 'F','N','\0'}}
     },
 
     [_FUNC] = {
@@ -85,8 +84,15 @@ const char * static_aliases[][MATRIX_ROWS][MATRIX_COLS] = {
     }
 };
 
-/* array of keycode aliases in PROGMEM. it's FUCKING massive, though*/
-#define NUMBER_OF_ALIASES 0xF0
+
+
+/* array of keycode aliases in PROGMEM. it's FUCKING massive, though
+ * 
+ * for funny symbols, construct the string char by char 
+ * ex. for backspace, which is two chars wide, enter in the array {BSPC_SYMBOL1, BSPC_SYMBOL2, '\0'} 
+ * throw in a string terminator, idk
+*/
+#define NUMBER_OF_ALIASES 0xFF
 const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "     ",
     "TRNS ",
@@ -128,9 +134,9 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "8",
     "9",
     "0",
-    "↲",
+    "CR",
     "ESC",
-    "BSPC",
+    {BSPC_SYMBOL1, BSPC_SYMBOL2,'\0'}, //at these addresses in the font bitmap are the funny symbols
     "TAB",
     "SPC",
     "-",
@@ -167,10 +173,10 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "DEL",
     "END",
     "PGDN",
-    "R",
-    "L",    //0x50
-    "DOWN",
-    "UP",
+    {RIGHT_SYMBOL, '\0'},
+    {LEFT_SYMBOL, '\0'},    //0x50
+    {DOWN_SYMBOL, '\0'},
+    {UP_SYMBOL, '\0'},
     "NUMLK",
     "/",    //Keypad versions follow
     "*",
@@ -322,54 +328,94 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
     "RGUI",
 };
 
+
+
 void matrix_init_user(void) {}
+
+void keyboard_post_init_user(void) {
+    // Customise these values to desired behaviour
+    debug_enable = true;
+    //debug_matrix = true;
+    //debug_keyboard=true;
+    //debug_mouse=true;
+}
 
 void matrix_scan_user(void) {}
 
-void led_set_user(uint8_t usb_led) {
-    // underglow
-}
+void led_set_user(uint8_t usb_led) {}
 
 uint32_t layer_state_set_user(uint32_t state) {
+    
+    /*debug output*/
+    dprintf("\nLAYER: %d (keycodes in hex)\n", biton32(state));
+    for (int row = 0; row < MATRIX_ROWS; row++) {
+        for (int col = 0; col < MATRIX_COLS; col++) {
+            uint16_t keycode = pgm_read_word(&(keymaps[biton32(state)][row][col]));
+            dprintf("%7X", keycode);
+        }
+        dprint("\n");
+    }
+   
     switch (biton32(state)) {
         case _NUM:
             writePinLow(B0);
             writePinHigh(D5);
+
+            oled_write_ln_P(PSTR("Layer: NUM"), false);
+            //oled_write_char(24, false);                     //testing printing arrow
+            oled_print_keymap_aliases(_NUM);
+
             break;
 
         case _FUNC:
             writePinHigh(B0);
             writePinLow(D5);
+
+            oled_write_ln_P(PSTR("Layer: FN"), false);
+            oled_print_keymap_aliases(_FUNC);
+
+            break;
+
+        case _BASE:
+            writePinHigh(B0);
+            writePinHigh(D5);
+
+            oled_write_ln_P(PSTR("Layer: BASE"), false);
+            oled_print_keymap_aliases(_BASE);
+
             break;
 
         default:
-            writePinHigh(B0);
-            writePinHigh(D5);
             break;
     }
     return state;
 }
 
+/*
+this is the OLED layer code recommended in the docs, but I prefer the layer_state_set function for handling the layer displays. 
+*/
 #ifdef OLED_DRIVER_ENABLE
 void oled_task_user(void) {
-    switch (get_highest_layer(layer_state)) {
-        case _NUM:
-            oled_write_ln_P(PSTR("Layer: NUM"), false);
-            oled_print_keymap_aliases(_NUM);
-            break;
+    //dprint("OLED task called \n");
+    //switch (get_highest_layer(layer_state)) {
+    //    case _NUM:
+    //        oled_write_ln_P(PSTR("Layer: NUM"), false);
+    //        oled_print_keymap_aliases(_NUM);
+    //        break;
 
-        case _FUNC:
-            oled_write_ln_P(PSTR("Layer: FN"), false);
-            oled_print_keymap_aliases(_FUNC);
-            break;
+    //    case _FUNC:
+    //        oled_write_ln_P(PSTR("Layer: FN"), false);
+    //        oled_print_keymap_aliases(_FUNC);
+    //        break;
 
-        case _BASE:
-            oled_write_ln_P(PSTR("Layer: BASE"), false);
-            oled_print_keymap_aliases(_BASE);
+    //    case _BASE:
+    //        oled_write_ln_P(PSTR("Layer: BASE"), false);
+    //        oled_print_keymap_aliases(_BASE);
+    //        break;
 
-        default:
-            break;
-    }
+    //    default:
+    //        break;
+    //}
 }
 #endif
 
@@ -392,7 +438,7 @@ void oled_print_static_aliases(uint8_t layer) {
 }
 
 /*prints keycode aliases to OLED, dynamically from keymap
-FIXME: slow as heck. bad code
+FIXME: code is bad. it's just bad code
 */
 void oled_print_keymap_aliases(uint8_t layer)
 {
@@ -434,7 +480,7 @@ void oled_print_keymap_aliases(uint8_t layer)
                 }
                 else {                                                                                          //otherwise, normal stuff
                     memcpy_P(&buffer_intermediate, &keycode_aliases[keycode], sizeof buffer_intermediate);      //memcpy the alias to first buffer from flash
-                    sprintf(buffer, "%-5s", buffer_intermediate);                                               //sprintf to the second buffer for formatting
+                    snprintf(buffer, BUFFER_SIZE, "%-5s", buffer_intermediate);                                 //snprintf to the second buffer for formatting
                 }
             }
             else {
@@ -448,7 +494,6 @@ void oled_print_keymap_aliases(uint8_t layer)
             int cursorCol = col * ALIAS_MAX_LENGTH; 
 
             oled_set_cursor(cursorCol, cursorRow);
-
             oled_write(buffer, false);
         }
     }

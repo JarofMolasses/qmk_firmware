@@ -242,7 +242,7 @@ uint32_t layer_state_set_user(uint32_t state) {
             hexprevious = 1;
             break;
 
-        default:
+        case _BASE:
             layer = 0;
             writePinHigh(B0);
             writePinHigh(D5);
@@ -251,6 +251,9 @@ uint32_t layer_state_set_user(uint32_t state) {
                 lcd_clrscr();
                 lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE");
             }
+            break;
+
+        default:
             break;
         }
     return state;

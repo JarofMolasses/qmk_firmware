@@ -67,9 +67,12 @@ uint32_t layer_state_set_user(uint32_t state) {
         writePinLow(D5);
         break;
 
-    default:
+    case _BASE:
         writePinHigh(B0);
         writePinHigh(D5);
+        break;
+
+    default:
         break;
     }
     return state;

@@ -110,7 +110,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 
             break;
 
-        default:
+        case _BASE:
             writePinHigh(B0);
             writePinHigh(D5);
 
@@ -119,6 +119,9 @@ uint32_t layer_state_set_user(uint32_t state) {
                 lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE    ");
             }
 
+            break;
+
+        default:
             break;
         }
     return state;

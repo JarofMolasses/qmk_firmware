@@ -143,8 +143,7 @@ void matrix_init_user(void) {
         lcd_gotoxy(3, 1);
         lcd_puts("& knuckles");
 
-
-        //wip: how 2 print 64-bit integers?
+        //wip: print 64-bit integers?
         /*
         lcd_clrscr();
         double test64 = (uint64_t)1<<63;
@@ -154,15 +153,18 @@ void matrix_init_user(void) {
         lcd_gotoxy(0, 1); lcd_puts(outbuffer);
         */
 
-        //pos = 7;
-        //lcd_clrscr();
-        //lcd_puts("TEST HEX:");
-
-        //lcd_gotoxy(9, 0);
-        //ultoa(intVal(10), outbuffer, 16);
-        //lcd_puts(outbuffer);
+        _delay_ms(2000);
     }
 }
+
+void keyboard_post_init_user(void) {
+    // Customise these values to desired behaviour
+    debug_enable = true;
+    //debug_matrix = true;
+    //debug_keyboard=true;
+    //debug_mouse=true;
+}
+
 
 /*
 void matrix_scan_user(void) {
@@ -174,6 +176,17 @@ void led_set_user(uint8_t usb_led) {
 */
 
 uint32_t layer_state_set_user(uint32_t state) {
+
+    //debug output 
+    dprintf("\nLAYER: %d (keycodes in hex)\n", biton32(state));
+    for (int row = 0; row < MATRIX_ROWS; row++) {
+        for (int col = 0; col < MATRIX_COLS; col++) {
+            uint16_t keycode = pgm_read_word(&(keymaps[biton32(state)][row][col]));
+            dprintf("%7X", keycode);
+        }
+        dprint("\n");
+    }
+
     switch (biton32(state)) {
     case _FUNC:
         layer = 1;
@@ -252,7 +265,7 @@ uint32_t layer_state_set_user(uint32_t state) {
         hexprevious = 1;
         break;
 
-    default:
+    case _BASE:
         layer = 0;
         writePinHigh(B0);
         writePinHigh(D5);
@@ -261,6 +274,9 @@ uint32_t layer_state_set_user(uint32_t state) {
             lcd_clrscr();
             lcd_gotoxy(0, 1); lcd_puts("LAYER: BASE");
         }
+        break;
+
+    default:
         break;
     }
     return state;

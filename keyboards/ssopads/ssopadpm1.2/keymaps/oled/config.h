@@ -22,4 +22,17 @@
 #define OLED_DISPLAY_128X64
 #define OLED_TIMEOUT 600000
 
+//OLED custom font
+#define OLED_FONT_H "keyboards/ssopads/lib/molassesfont.c"
+
+//at these addresses in the custom font bitmap are the funny symbols
+#define LEFT_SYMBOL 0x1b
+#define RIGHT_SYMBOL 0x1a
+#define DOWN_SYMBOL 0x19
+#define UP_SYMBOL 0x18
+#define RETURN_SYMBOL 0x80
+#define BSPC_SYMBOL1 0x81
+#define BSPC_SYMBOL2 0x82
+
+
 
