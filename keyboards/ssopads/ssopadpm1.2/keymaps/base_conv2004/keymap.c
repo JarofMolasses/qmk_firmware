@@ -564,7 +564,7 @@ void reset(void) {
     lcd_gotoxy(displayX, displayY);
 }
 
-/*"Low level" printing function*/
+/*"Low level" printing function */
 void printBinOut(uint8_t base) {
     clearStr(outbuffer);
     uint32_t val = intVal(base);

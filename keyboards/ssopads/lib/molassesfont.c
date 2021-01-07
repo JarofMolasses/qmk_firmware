@@ -1,6 +1,6 @@
 #include "progmem.h"
 
-// josh font with some special characters
+// custom font with some special characters
 // Online editor: https://github.com/joric/qle
 
 static const unsigned char PROGMEM font[] = {
