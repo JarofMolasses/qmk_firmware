@@ -1,5 +1,4 @@
 # Hex-Dec-Bin base converter for the SSOpad, 20x4 LCD version
-(Took some work to get the 20x4 LCD to work.) \
 This keymap adds some higher layers which run a simple base converter on the LCD. Still works as a normal macropad too, of course.\
 The inputs are all done in QMK macros.
 

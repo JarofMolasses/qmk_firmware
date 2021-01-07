@@ -1,5 +1,6 @@
 # ssopad1.2
-Teensy firmware. 
+Teensy firmware. The PCB is borked, Teensy2.0 is not really supported :c \
+It is recommended to use Pro Micro instead.
 
 V1.2 Teensy, with underglow (just some LEDs on a perfboard underneath, driven like a backlight)
 ![V1.2 Teensy, underglow](https://user-images.githubusercontent.com/33560291/85184022-05ea1000-b243-11ea-93e6-429593b7d0d9.jpg)
