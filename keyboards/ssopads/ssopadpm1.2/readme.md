@@ -1,8 +1,10 @@
 # ssopadpm1.2
-The Pro Micro variants (by extension, Elite-C and so on).
+The Pro Micro variants (by extension, Elite-C and so on). \
+I don't think keymaps are generally used like this, but oh well. 
 
-V1.2 Pro Micro, with the I2C LCD
-![V1.2 Pro Micro, LCD](https://user-images.githubusercontent.com/33560291/85238368-4cc23c00-b3e2-11ea-81de-8bc2fac65465.png)
+SSOpad, Pro Micro, 20x4 LCD, base converter:
+![V1.2 Pro Micro, 20x4 LCD](https://user-images.githubusercontent.com/33560291/103701613-2e292a00-4f5b-11eb-8cc5-206fa004af61.jpg)
+
 
 Keyboard Maintainer: [molasses](https://github.com/JarofMolasses)  
 
