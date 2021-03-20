@@ -16,6 +16,7 @@
 #include QMK_KEYBOARD_H
 #include <string.h>
 #include <stdio.h>
+#include <util/delay.h>
 #include "print.h"
 
 #define ALIAS_MAX_LENGTH 5
@@ -24,33 +25,43 @@
 
 void oled_print_static_aliases(uint8_t);
 void oled_print_keymap_aliases(uint8_t);
-void clearStr(char[]);
 
 enum keymap_layers { _BASE, _NUM, _FUNC };
 
+//static void render_logo(void) {
+//    static const char PROGMEM qmk_logo[] = {
+//        0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x90, 0x91, 0x92, 0x93, 0x94,
+//        0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF, 0xB0, 0xB1, 0xB2, 0xB3, 0xB4,
+//        0xC0, 0xC1, 0xC2, 0xC3, 0xC4, 0xC5, 0xC6, 0xC7, 0xC8, 0xC9, 0xCA, 0xCB, 0xCC, 0xCD, 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0x00
+//    };
+//
+//    oled_write_P(qmk_logo, false);
+//}
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT(/* BASE */
-        KC_BSPC, KC_GRV,      \
+        KC_BSPC, KC_GRV,    \
         KC_HOME, KC_UP, KC_PGUP, KC_VOLU,    \
         KC_LEFT, KC_DOWN, KC_RIGHT, KC_VOLD, \
         KC_END, KC_NO, KC_PGDN, KC_LGUI,     \
-        KC_INS, TG(_NUM), KC_DEL, MO(_FUNC)  \
+        KC_INS, TG(_NUM), KC_DEL, MO(_FUNC), KC_MUTE   //stick the encoder button on the end here, as k44
      ),
 
     [_NUM] = LAYOUT(/* NUM */
-        KC_BSPC, KC_PSLS,\
+        KC_BSPC, KC_PSLS, \
         KC_7, KC_8, KC_9, KC_PAST,\
         KC_4, KC_5, KC_6, KC_PMNS,\
         KC_1, KC_2, KC_3, KC_PPLS,\
-        KC_0, KC_TRNS, KC_PDOT, LT(_FUNC, KC_PENT)\
+        KC_0, KC_TRNS, KC_PDOT, LT(_FUNC, KC_PENT), KC_MUTE
     ),
 
     [_FUNC] = LAYOUT(/* function */
-        KC_BSPC, KC_NO,\
+        KC_BSPC, KC_NO, \
         KC_F7, KC_F8, KC_F9, BL_INC,\
         KC_F4, KC_F5, KC_F6, BL_DEC,\
         KC_F1, KC_F2, KC_F3, KC_CAPS,\
-        KC_F10, KC_NO, KC_NO, KC_TRNS\
+        KC_F10, KC_NO, KC_NO, KC_TRNS, KC_MUTE
     ),
 
 };
@@ -77,16 +88,15 @@ const char static_aliases[][MATRIX_ROWS][MATRIX_COLS][6] = {
 
     [_FUNC] = {
         {"    ", "    ", "    ", "     "},
-        {"    ", "    ", "    ", "BL+  "},
-        {"    ", "    ", "    ", "BL-  "},
+        {"    ", "    ", "    ", "     "},
+        {"    ", "    ", "    ", "     "},
         {"    ", "    ", "    ", "     "},
         {"    ", "    ", "    ", "     "}
     }
 };
 
 
-
-/* array of keycode aliases in PROGMEM. it's FUCKING massive, though
+/* array of keycode aliases in PROGMEM. it's massive
  * 
  * for funny symbols, construct the string char by char 
  * ex. for backspace, which is two chars wide, enter in the array {BSPC_INDEX1, BSPC_INDEX2, '\0'} 
@@ -329,8 +339,8 @@ const char keycode_aliases[NUMBER_OF_ALIASES][BUFFER_SIZE] PROGMEM = {
 };
 
 
-
-void matrix_init_user(void) {}
+void matrix_init_user(void) {
+}
 
 void keyboard_post_init_user(void) {
     // Customise these values to desired behaviour
@@ -344,6 +354,42 @@ void matrix_scan_user(void) {}
 
 void led_set_user(uint8_t usb_led) {}
 
+void encoder_update_user(uint8_t index, bool clockwise) {
+    switch (biton32(layer_state)) {
+    case _NUM:
+        if (index == 0) {
+            if (clockwise) {
+                tap_code(KC_VOLU);
+            }
+            else {
+                tap_code(KC_VOLD);
+            }
+        }
+        break;
+    case _BASE:
+        if (index == 0) {
+            if (clockwise) {
+                tap_code(KC_VOLU);
+            }
+            else {
+                tap_code(KC_VOLD);
+            }
+        }
+        break;
+
+    default:
+        if (index == 0) {
+            if (clockwise) {
+                tap_code(KC_VOLU);
+            }
+            else {
+                tap_code(KC_VOLD);
+            }
+        }
+        break;
+    }
+}
+
 uint32_t layer_state_set_user(uint32_t state) {
     
     /*debug output*/
@@ -355,7 +401,10 @@ uint32_t layer_state_set_user(uint32_t state) {
         }
         dprint("\n");
     }
-   
+
+    //oled_set_cursor(11, 0);  render_logo();
+    //oled_set_cursor(0, 0);                      //fix later, have to go to school lol
+
     switch (biton32(state)) {
         case _NUM:
             writePinLow(B0);
@@ -393,6 +442,7 @@ uint32_t layer_state_set_user(uint32_t state) {
 /*
 this is the OLED layer code recommended in the docs, but I prefer the layer_state_set function for handling the layer displays. 
 */
+
 #ifdef OLED_DRIVER_ENABLE
 void oled_task_user(void) {
     //dprint("OLED task called \n");
@@ -417,6 +467,7 @@ void oled_task_user(void) {
     //}
 }
 #endif
+
 
 //test: prints contents of hardcoded alias arrays to OLED
 void oled_print_static_aliases(uint8_t layer) {
@@ -475,7 +526,6 @@ void oled_print_keymap_aliases(uint8_t layer)
                 if (trans_OOB) {                                                                                //if trans flag set, refer to backup but at custom static alias layer
                     sprintf(buffer, "%-5s", static_aliases[static_alias_layer][row][col]);
                     //sprintf(buffer, "%-5x", keycode);                                                         //option: print raw hex
-                    //sprintf(buffer, "%-5s", "FN");                                                            //option: indicate special key 
                 }
                 else {                                                                                          //otherwise, normal stuff
                     memcpy_P(&buffer_intermediate, &keycode_aliases[keycode], sizeof buffer_intermediate);      //memcpy the alias to first buffer from flash
@@ -485,7 +535,6 @@ void oled_print_keymap_aliases(uint8_t layer)
             else {
                 sprintf(buffer, "%-5s", static_aliases[layer][row][col]);                                       //refer to the hardcoded backup at regular layer 
                 //sprintf(buffer, "%-5x", keycode);                                                             //option: print raw hex
-                //sprintf(buffer, "%-5s", "FN");                                                                //option: indicate special key 
             }
 
             /*physical display layout compensation*/
@@ -498,10 +547,4 @@ void oled_print_keymap_aliases(uint8_t layer)
     }
 }
 
-/*Clear a character array; fill with string terminators*/
-void clearStr(char arr[]) {
-    for (uint8_t i = 0; i < BUFFER_SIZE; ++i) {
-        arr[i] = '\0';
-    }
-}
 

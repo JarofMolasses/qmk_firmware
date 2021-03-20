@@ -20,7 +20,13 @@
 
 // OLED overrides
 #define OLED_DISPLAY_128X64
-#define OLED_TIMEOUT 600000
+#define OLED_TIMEOUT 3600000
+
+//encoder config
+#define ENCODERS_PAD_A { D3 }
+#define ENCODERS_PAD_B { D2 }
+#define ENCODER_RESOLUTION 4
+#define TAP_CODE_DELAY 10
 
 //OLED custom font
 #define OLED_FONT_H "keyboards/ssopads/lib/molassesfont.c"
@@ -30,9 +36,9 @@
 #define RIGHT_INDEX 0x1a
 #define DOWN_INDEX 0x19
 #define UP_INDEX 0x18
-#define RETURN_INDEX 0x80
-#define BSPC_INDEX1 0x81
-#define BSPC_INDEX2 0x82
+#define RETURN_INDEX 0x9D
+#define BSPC_INDEX1 0x9E
+#define BSPC_INDEX2 0x9F
 #define LOSS_INDEX1 0xDE
 #define LOSS_INDEX2 0xDF
 
